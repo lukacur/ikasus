@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
@@ -99,7 +98,7 @@ public class JWTUtil {
     }
 
     private Claims parseClaims(String token) {
-        SecretKeySpec spec = new SecretKeySpec(this.SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKeySpec spec = new SecretKeySpec(Base64.getDecoder().decode(this.SECRET), "HmacSHA256");
 
         return Jwts.parserBuilder()
                 .setSigningKey(spec)
