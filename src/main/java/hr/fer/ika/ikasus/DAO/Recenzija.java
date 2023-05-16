@@ -13,6 +13,18 @@ public class Recenzija {
     @JoinColumn(name = "idvozilo")
     private Vozilo idvozilo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idunajmitelj")
+    private Unajmitelj idunajmitelj;
+
+    public Unajmitelj getIdunajmitelj() {
+        return idunajmitelj;
+    }
+
+    public void setIdunajmitelj(Unajmitelj idunajmitelj) {
+        this.idunajmitelj = idunajmitelj;
+    }
+
     public Vozilo getIdvozilo() {
         return idvozilo;
     }
