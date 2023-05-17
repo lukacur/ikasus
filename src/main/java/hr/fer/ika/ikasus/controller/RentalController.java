@@ -81,7 +81,7 @@ public class RentalController {
     }
 
     @DeleteMapping
-    public ResponseEntity<CommonResponse> deleteRental(DeleteRequest<Integer> deleteRequest) {
+    public ResponseEntity<CommonResponse> deleteRental(@RequestBody DeleteRequest<Integer> deleteRequest) {
         boolean deleted = this.rentalService.deleteRental(deleteRequest.getId());
 
         if (!deleted) {

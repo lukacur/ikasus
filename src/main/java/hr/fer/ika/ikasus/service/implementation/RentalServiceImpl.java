@@ -85,8 +85,10 @@ public class RentalServiceImpl implements RentalService {
         }).get();
     }
 
-    private static boolean validate(CreateRentalDetail detail, List<Najam> vehicleRentals) {
-        if (detail.getTimeFrom() == null || detail.getCarId() == null || detail.getContractId() == null) {
+    private static boolean validate(CreateRentalDetail detail, List<Najam> vehicleRentals, boolean updateCheck) {
+        if (detail.getTimeFrom() == null ||
+                !updateCheck && (detail.getVehicleId() == null || detail.getContractId() == null)
+        ) {
             return false;
         }
 
@@ -130,16 +132,6 @@ public class RentalServiceImpl implements RentalService {
             return false;
         }
 
-        List<Najam> rentals = this.najamRepository.findAll().stream()
-                .filter(r -> !Objects.equals(r.getId(), rentalId))
-                .collect(Collectors.toList());
-
-        if (!validate(detail, rentals)) {
-            return false;
-        }
-
-        rentals = null;
-
         Optional<Najam> rentalOpt = this.najamRepository.findById(rentalId);
 
         if (rentalOpt.isEmpty()) {
@@ -147,6 +139,18 @@ public class RentalServiceImpl implements RentalService {
         }
 
         Najam rental = rentalOpt.get();
+
+        Vozilo v = rental.getIdvozilo();
+
+        List<Najam> rentals = this.najamRepository.findByIdvozilo(v).stream()
+                .filter(r -> !Objects.equals(r.getId(), rentalId))
+                .collect(Collectors.toList());
+
+        if (!validate(detail, rentals, true)) {
+            return false;
+        }
+
+        rentals = null;
 
         if (detail.getTimeFrom() != null) {
             rental.setVrijemeod(detail.getTimeFrom().toInstant());
@@ -164,8 +168,8 @@ public class RentalServiceImpl implements RentalService {
             rental.setAktivan(detail.getActive());
         }
 
-        if (detail.getCarId() != null) {
-            Optional<Vozilo> vehOpt = this.voziloRepository.findById(detail.getCarId());
+        if (detail.getVehicleId() != null) {
+            Optional<Vozilo> vehOpt = this.voziloRepository.findById(detail.getVehicleId());
 
             if (vehOpt.isEmpty()) {
                 throw new IllegalStateException("Rollback: can't set vehicle");
@@ -189,21 +193,21 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public Integer createRental(CreateRentalDetail detail) {
-        if (detail.getContractId() == null || detail.getCarId() == null) {
+        if (detail.getContractId() == null || detail.getVehicleId() == null) {
             return null;
         }
 
         Vozilo v = new Vozilo();
-        v.setId(detail.getCarId());
+        v.setId(detail.getVehicleId());
 
         List<Najam> vehicleRentals = this.najamRepository.findByIdvozilo(v);
 
         // Check if an active rental already exists or detail date is invalid (between any of rental starts and ends)
-        if (!validate(detail, vehicleRentals)) {
+        if (!validate(detail, vehicleRentals, false)) {
             return null;
         }
 
-        Optional<Vozilo> vehicleOpt = this.voziloRepository.findById(detail.getCarId());
+        Optional<Vozilo> vehicleOpt = this.voziloRepository.findById(detail.getVehicleId());
         Optional<Ugovor> contractOpt = this.ugovorRepository.findById(detail.getContractId());
 
         if (vehicleOpt.isEmpty() || contractOpt.isEmpty()) {
@@ -215,7 +219,9 @@ public class RentalServiceImpl implements RentalService {
         rental.setIdvozilo(vehicleOpt.get());
         rental.setIdugovor(contractOpt.get());
         rental.setVrijemeod(detail.getTimeFrom().toInstant());
-        rental.setVrijemedo(detail.getTimeTo().toInstant());
+        if (detail.getTimeTo() != null) {
+            rental.setVrijemedo(detail.getTimeTo().toInstant());
+        }
 
         rental = this.najamRepository.save(rental);
 

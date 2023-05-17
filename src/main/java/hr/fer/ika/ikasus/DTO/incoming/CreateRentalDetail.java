@@ -6,7 +6,7 @@ import java.util.Date;
  * @author Luka Ćurić
  */
 public class CreateRentalDetail {
-    private Integer carId;
+    private Integer vehicleId;
     private Integer contractId;
     private Date timeFrom;
     private Date timeTo;
@@ -16,12 +16,12 @@ public class CreateRentalDetail {
     public CreateRentalDetail() {
     }
 
-    public Integer getCarId() {
-        return carId;
+    public Integer getVehicleId() {
+        return vehicleId;
     }
 
-    public void setCarId(Integer carId) {
-        this.carId = carId;
+    public void setVehicleId(Integer vehicleId) {
+        this.vehicleId = vehicleId;
     }
 
     public Integer getContractId() {
