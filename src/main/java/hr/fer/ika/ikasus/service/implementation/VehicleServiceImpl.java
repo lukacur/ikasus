@@ -4,7 +4,6 @@ import hr.fer.ika.ikasus.DAO.Lokacija;
 import hr.fer.ika.ikasus.DAO.TipVozila;
 import hr.fer.ika.ikasus.DAO.Vozilo;
 import hr.fer.ika.ikasus.DTO.incoming.CreateVehicleMaster;
-import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.VehicleMDInfo;
 import hr.fer.ika.ikasus.DTO.outgoing.VehicleMaster;
 import hr.fer.ika.ikasus.DTO.outgoing.RentalDetail;
@@ -44,7 +43,9 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public boolean updateVehicle(Integer vehicleId, CreateVehicleMaster createVehicleMaster) {
-        if (vehicleId == null) {
+        if (vehicleId == null ||
+                createVehicleMaster.getImageUrl() != null && createVehicleMaster.getImageBase64Encoded() != null
+        ) {
             return false;
         }
 
@@ -54,19 +55,25 @@ public class VehicleServiceImpl implements VehicleService {
             return false;
         }
 
-        Vozilo vehicle = vehOpt.get();
-
+        Vozilo v = vehOpt.get();
 
         if (createVehicleMaster.getImageBase64Encoded() != null) {
+            String imagePath = AppImage.CAR_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpeg";
+
             AppImage image = AppImage.fromBase64Builder()
+                    .withImagePath(imagePath)
                     .withImageData(createVehicleMaster.getImageBase64Encoded())
                     .build();
 
             try {
                 image.save();
+                image.close();
+                v.setPutdoslike(imagePath);
             } catch (IOException e) {
                 return false;
             }
+        } else if (createVehicleMaster.getImageUrl() != null) {
+            v.setPutdoslike(createVehicleMaster.getImageUrl());
         }
 
         if (createVehicleMaster.getVehicleTypeId() != null) {
@@ -75,7 +82,7 @@ public class VehicleServiceImpl implements VehicleService {
                 return false;
             }
 
-            vehicle.setIdtip(vtOpt.get());
+            v.setIdtip(vtOpt.get());
         }
 
         if (createVehicleMaster.getLocationId() != null) {
@@ -84,26 +91,26 @@ public class VehicleServiceImpl implements VehicleService {
                 return false;
             }
 
-            vehicle.setIdlokacija(locOpt.get());
+            v.setIdlokacija(locOpt.get());
         }
 
         if (createVehicleMaster.getManufacturer() != null) {
-            vehicle.setProizvodjac(createVehicleMaster.getManufacturer());
+            v.setProizvodjac(createVehicleMaster.getManufacturer());
         }
 
         if (createVehicleMaster.getKmDriven() != null) {
-            vehicle.setKilometraza(createVehicleMaster.getKmDriven());
+            v.setKilometraza(createVehicleMaster.getKmDriven());
         }
 
         if (createVehicleMaster.getName() != null) {
-            vehicle.setNaziv(createVehicleMaster.getName());
+            v.setNaziv(createVehicleMaster.getName());
         }
 
         if (createVehicleMaster.getRegistration() != null) {
-            vehicle.setRegistracija(createVehicleMaster.getRegistration());
+            v.setRegistracija(createVehicleMaster.getRegistration());
         }
 
-        this.voziloRepository.save(vehicle);
+        this.voziloRepository.save(v);
 
         return true;
     }
@@ -111,7 +118,9 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     @Transactional(rollbackFor = { IllegalStateException.class })
     public Integer createVehicle(CreateVehicleMaster createVehicleMaster) {
-        if (createVehicleMaster.getVehicleTypeId() == null) {
+        if (createVehicleMaster.getVehicleTypeId() == null ||
+                createVehicleMaster.getImageUrl() != null && createVehicleMaster.getImageBase64Encoded() != null
+        ) {
             return null;
         }
 
@@ -147,7 +156,7 @@ public class VehicleServiceImpl implements VehicleService {
         Integer vehicleId = v.getId();
 
         if (createVehicleMaster.getImageBase64Encoded() != null) {
-            String imagePath = AppImage.CAR_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpg";
+            String imagePath = AppImage.CAR_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpeg";
             v.setPutdoslike(imagePath);
 
             try {
@@ -156,14 +165,17 @@ public class VehicleServiceImpl implements VehicleService {
                         .withImageData(createVehicleMaster.getImageBase64Encoded())
                         .build();
                 image.save();
-
-                this.voziloRepository.save(v);
+                image.close();
             } catch (Exception ex) {
                 throw new IllegalStateException("Rollback: Image couldn't be set");
             }
+        } else if (createVehicleMaster.getImageUrl() != null) {
+            v.setPutdoslike(createVehicleMaster.getImageUrl());
         }
 
-        return null;
+        this.voziloRepository.save(v);
+
+        return vehicleId;
     }
 
     @Override
@@ -173,6 +185,9 @@ public class VehicleServiceImpl implements VehicleService {
                     VehicleMaster vehicleMaster = new VehicleMaster();
                     vehicleMaster.setId(v.getId());
                     vehicleMaster.setManufacturer(v.getProizvodjac());
+                    if (v.getPutdoslike() != null) {
+                        vehicleMaster.setImagePath(v.getPutdoslike().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
+                    }
                     vehicleMaster.setRegistration(v.getRegistracija());
                     vehicleMaster.setName(v.getNaziv());
                     vehicleMaster.setPricePerDay(v.getDnevnacijena().doubleValue());
@@ -194,6 +209,9 @@ public class VehicleServiceImpl implements VehicleService {
 
         VehicleMDInfo mdInfo = new VehicleMDInfo();
         mdInfo.setId(vehicle.getId());
+        if (vehicle.getPutdoslike() != null) {
+            mdInfo.setImagePath(vehicle.getPutdoslike().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
+        }
         mdInfo.setManufacturer(vehicle.getProizvodjac());
         mdInfo.setName(vehicle.getNaziv());
         mdInfo.setRegistration(vehicle.getRegistracija());

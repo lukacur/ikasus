@@ -10,6 +10,7 @@ public class VehicleMDInfo {
     private String registration;
     private String name;
     private String manufacturer;
+    private String imagePath;
     private Double pricePerDay;
 
     private List<RentalDetail> rentals;
@@ -47,6 +48,14 @@ public class VehicleMDInfo {
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public Double getPricePerDay() {

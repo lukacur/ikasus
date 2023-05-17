@@ -9,6 +9,7 @@ public class CreateVehicleMaster {
     private String manufacturer;
     private Integer kmDriven;
     private Double pricePerDay;
+    private String imageUrl;
     private String imageBase64Encoded;
     private Integer locationId;
     private String vehicleTypeId;
@@ -54,6 +55,14 @@ public class CreateVehicleMaster {
 
     public void setPricePerDay(Double pricePerDay) {
         this.pricePerDay = pricePerDay;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getImageBase64Encoded() {

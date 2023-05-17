@@ -57,7 +57,7 @@ public class AppImage implements Closeable {
 
         public AppImage build() {
             if (this.imagePath == null || this.imageDataBase64 == null && !this.loadFromFile) {
-                throw new IllegalStateException("Both image path and imageData have to be set");
+                throw new IllegalStateException("Image path has to be set if loading image and imageData if saving image");
             }
 
             AppImage appImage = new AppImage(this.imagePath);
@@ -108,7 +108,7 @@ public class AppImage implements Closeable {
 
         if (image == null) {
             try {
-                URL resource = AppImage.class.getClassLoader().getResource("/");
+                URL resource = AppImage.class.getClassLoader().getResource("./");
                 if (resource == null) {
                     throw new IllegalArgumentException("Invalid image location: " + this.imagePath);
                 }
@@ -127,7 +127,7 @@ public class AppImage implements Closeable {
             }
         }
 
-        ImageIO.write(this.imageData, "jpg", imagePath.toFile());
+        ImageIO.write(this.imageData, "jpeg", imagePath.toFile());
 
         this.imageData.flush();
     }
