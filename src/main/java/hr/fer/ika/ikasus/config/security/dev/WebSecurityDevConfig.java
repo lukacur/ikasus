@@ -1,6 +1,7 @@
 package hr.fer.ika.ikasus.config.security.dev;
 
 import hr.fer.ika.ikasus.authorization.JWTRequestFilter;
+import hr.fer.ika.ikasus.config.security.Authorities;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -49,15 +50,16 @@ public class WebSecurityDevConfig {
                 .authorizeHttpRequests()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/static-content/images/private/**")
-                        .hasAnyAuthority("MANAGER", "EMPLOYEE")
+                        .hasAnyAuthority(Authorities.MANAGER_AUTHORITY, Authorities.EMPLOYEE_AUTHORITY)
                     .requestMatchers("/static-content/**").permitAll()
                     .requestMatchers("/home/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/api/public/**").permitAll()
-                    .requestMatchers("/api/authenticated/manager/**").hasAuthority("MANAGER")
-                    .requestMatchers("/api/authenticated/employee/**").hasAnyAuthority("MANAGER", "EMPLOYEE")
-                    .requestMatchers("/home/email-test").hasAuthority("MANAGER")
-                    .requestMatchers("/api/authenticated/**").hasAnyAuthority("MANAGER", "EMPLOYEE")
+                    .requestMatchers("/api/authenticated/manager/**").hasAuthority(Authorities.MANAGER_AUTHORITY)
+                    .requestMatchers("/api/authenticated/employee/**")
+                        .hasAnyAuthority(Authorities.MANAGER_AUTHORITY, Authorities.EMPLOYEE_AUTHORITY)
+                    .requestMatchers("/home/email-test").hasAuthority(Authorities.MANAGER_AUTHORITY)
+                    .requestMatchers("/api/authenticated/**").authenticated()
                 .and()
                 .cors()
                 .and()

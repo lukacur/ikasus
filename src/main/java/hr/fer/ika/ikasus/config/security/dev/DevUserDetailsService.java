@@ -3,6 +3,7 @@ package hr.fer.ika.ikasus.config.security.dev;
 import hr.fer.ika.ikasus.DAO.Iznajmljivac;
 import hr.fer.ika.ikasus.DAO.Unajmitelj;
 import hr.fer.ika.ikasus.DAO.UpraviteljPoslovnice;
+import hr.fer.ika.ikasus.config.security.Authorities;
 import hr.fer.ika.ikasus.repository.IznajmljivacRepository;
 import hr.fer.ika.ikasus.repository.UnajmiteljRepository;
 import hr.fer.ika.ikasus.repository.UpraviteljPoslovniceRepository;
@@ -49,7 +50,7 @@ public class DevUserDetailsService implements UserDetailsService {
                         .withUsername(iznajmljivac.getEmail())
                         .withPassword(iznajmljivac.getLozinka())
                         .withType(SubjectType.EMPLOYEE)
-                        .withAuthorities(List.of(() -> "EMPLOYEE"))
+                        .withAuthorities(List.of(() -> Authorities.EMPLOYEE_AUTHORITY))
                         .build();
             } else {
                 Optional<Unajmitelj> unj = this.unajmiteljRepository.findByEmail(username);
@@ -60,7 +61,7 @@ public class DevUserDetailsService implements UserDetailsService {
                             .withUsername(unajmitelj.getEmail())
                             .withPassword(unajmitelj.getLozinka())
                             .withType(SubjectType.CUSTOMER)
-                            .withAuthorities(List.of(() -> "CUSTOMER"))
+                            .withAuthorities(List.of(() -> Authorities.CUSTOMER_AUTHORITY))
                             .build();
                 }
             }
@@ -74,7 +75,7 @@ public class DevUserDetailsService implements UserDetailsService {
                         .withUsername(upraviteljPoslovnice.getKorisnickoime())
                         .withPassword(upraviteljPoslovnice.getLozinka())
                         .withType(SubjectType.MANAGER)
-                        .withAuthorities(List.of(() -> "MANAGER"))
+                        .withAuthorities(List.of(() -> Authorities.MANAGER_AUTHORITY))
                         .build();
             }
         }
