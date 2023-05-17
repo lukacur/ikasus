@@ -115,4 +115,21 @@ public class ContractServiceImpl implements ContractService {
 
         return true;
     }
+
+    @Override
+    public boolean deleteContract(Integer contractId) {
+        if (contractId == null) {
+            return false;
+        }
+
+        Optional<Ugovor> contractOpt = this.ugovorRepository.findById(contractId);
+
+        if (contractOpt.isEmpty()) {
+            return false;
+        }
+
+        this.ugovorRepository.delete(contractOpt.get());
+
+        return true;
+    }
 }

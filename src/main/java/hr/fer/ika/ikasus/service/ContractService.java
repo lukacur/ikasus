@@ -14,4 +14,5 @@ public interface ContractService {
     ContractDetail getDetailsFor(Integer contractId);
     Integer createContract(UpdateContractDetail contractDetail);
     boolean updateDetailsFor(Integer contractId, UpdateContractDetail detail);
+    boolean deleteContract(Integer contractId);
 }

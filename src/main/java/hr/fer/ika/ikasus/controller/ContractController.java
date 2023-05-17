@@ -1,6 +1,8 @@
 package hr.fer.ika.ikasus.controller;
 
+import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.incoming.UpdateContractDetail;
+import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
 import hr.fer.ika.ikasus.DTO.outgoing.ContractDetail;
 import hr.fer.ika.ikasus.DTO.outgoing.ContractMaster;
 import hr.fer.ika.ikasus.service.ContractService;
@@ -43,6 +45,20 @@ public class ContractController {
         return ResponseEntity.ok(detail);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateContractDetails(
+            @PathVariable("id") Integer contractId,
+            @RequestBody UpdateContractDetail contractDetailUpdate
+    ) {
+        boolean success = this.contractService.updateDetailsFor(contractId, contractDetailUpdate);
+
+        if (!success) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping
     public ResponseEntity<?> createContract(
             HttpServletRequest req,
@@ -59,15 +75,16 @@ public class ContractController {
         return ResponseEntity.created(URI.create(createdURL)).build();
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> updateContractDetails(
-            @PathVariable("id") Integer contractId,
-            @RequestBody UpdateContractDetail contractDetailUpdate
-    ) {
-        boolean success = this.contractService.updateDetailsFor(contractId, contractDetailUpdate);
+    @DeleteMapping
+    public ResponseEntity<CommonResponse> deleteContract(DeleteRequest<Integer> deleteRequest) {
+        boolean deleted = this.contractService.deleteContract(deleteRequest.getId());
 
-        if (!success) {
-            return ResponseEntity.badRequest().build();
+        if (!deleted) {
+            CommonResponse errResp = new CommonResponse();
+            errResp.setIsError(true);
+            errResp.setError("Invalid delete request");
+
+            return ResponseEntity.badRequest().body(errResp);
         }
 
         return ResponseEntity.noContent().build();
