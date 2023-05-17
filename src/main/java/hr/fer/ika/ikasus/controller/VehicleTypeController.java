@@ -1,5 +1,6 @@
 package hr.fer.ika.ikasus.controller;
 
+import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
 import hr.fer.ika.ikasus.DTO.inout.VehicleType;
 import hr.fer.ika.ikasus.service.VehicleTypeService;
@@ -79,7 +80,7 @@ public class VehicleTypeController {
     }
 
     @DeleteMapping
-    public ResponseEntity<CommonResponse> deleteVehicleType(@RequestBody VehicleType vehicleType) {
+    public ResponseEntity<CommonResponse> deleteVehicleType(@RequestBody DeleteRequest<String> vehicleType) {
         boolean deleted = this.vehicleTypeService.deleteVehicleType(vehicleType.getId());
 
         if (!deleted) {
