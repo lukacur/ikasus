@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface VehicleService {
     List<VehicleMaster> getVehicles();
-    VehicleMDInfo getVehicleMDInfo(Integer carId);
+    VehicleMDInfo getVehicleMDInfo(Integer vehicleId);
     boolean updateVehicle(Integer vehicleId, CreateVehicleMaster createVehicleMaster);
     Integer createVehicle(CreateVehicleMaster createVehicleMaster);
     boolean deleteVehicle(Integer id);

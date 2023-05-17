@@ -30,19 +30,17 @@ public class VehicleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VehicleMaster>> getCars() {
-        List<VehicleMaster> cars = this.vehicleService.getVehicles();
-
-        return ResponseEntity.ok(cars);
+    public ResponseEntity<List<VehicleMaster>> getVehicles() {
+        return ResponseEntity.ok(this.vehicleService.getVehicles());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VehicleMDInfo> getCarInfo(@PathVariable("id") Integer carId) {
-        if (carId == null) {
+    public ResponseEntity<VehicleMDInfo> getVehicleInfo(@PathVariable("id") Integer vehicleId) {
+        if (vehicleId == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        VehicleMDInfo mdInfo = this.vehicleService.getVehicleMDInfo(carId);
+        VehicleMDInfo mdInfo = this.vehicleService.getVehicleMDInfo(vehicleId);
 
         if (mdInfo == null) {
             return ResponseEntity.badRequest().build();

@@ -58,7 +58,7 @@ public class VehicleServiceImpl implements VehicleService {
         Vozilo v = vehOpt.get();
 
         if (createVehicleMaster.getImageBase64Encoded() != null) {
-            String imagePath = AppImage.CAR_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpeg";
+            String imagePath = AppImage.VEHICLE_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpeg";
 
             AppImage image = AppImage.fromBase64Builder()
                     .withImagePath(imagePath)
@@ -156,7 +156,7 @@ public class VehicleServiceImpl implements VehicleService {
         Integer vehicleId = v.getId();
 
         if (createVehicleMaster.getImageBase64Encoded() != null) {
-            String imagePath = AppImage.CAR_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpeg";
+            String imagePath = AppImage.VEHICLE_IMAGE_ROOT + "vehicle_" + v.getIdtip().getNazivtip() + vehicleId + ".jpeg";
             v.setPutdoslike(imagePath);
 
             try {
@@ -193,7 +193,9 @@ public class VehicleServiceImpl implements VehicleService {
                     vehicleMaster.setName(v.getNaziv());
                     vehicleMaster.setPricePerDay(v.getDnevnacijena().doubleValue());
                     vehicleMaster.setVehicleTypeId(v.getIdtip().getId());
-                    vehicleMaster.setLocationId(v.getIdlokacija().getId());
+                    if (v.getIdlokacija() != null) {
+                        vehicleMaster.setLocationId(v.getIdlokacija().getId());
+                    }
 
                     return vehicleMaster;
                 })
@@ -201,8 +203,8 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public VehicleMDInfo getVehicleMDInfo(Integer carId) {
-        Optional<Vozilo> vehOpt = this.voziloRepository.findById(carId);
+    public VehicleMDInfo getVehicleMDInfo(Integer vehicleId) {
+        Optional<Vozilo> vehOpt = this.voziloRepository.findById(vehicleId);
 
         if (vehOpt.isEmpty()) {
             return null;
@@ -253,10 +255,13 @@ public class VehicleServiceImpl implements VehicleService {
             return false;
         }
 
-        Vozilo v = new Vozilo();
-        v.setId(id);
+        Optional<Vozilo> v = this.voziloRepository.findById(id);
 
-        this.voziloRepository.delete(v);
+        if (v.isEmpty()) {
+            return false;
+        }
+
+        this.voziloRepository.delete(v.get());
 
         return true;
     }
