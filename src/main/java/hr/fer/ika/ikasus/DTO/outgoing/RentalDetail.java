@@ -9,8 +9,10 @@ public class RentalDetail {
     private Integer id;
     private Date timeFrom;
     private Date timeTo;
+    private Integer kmDriven;
     private Boolean active;
-    private Integer carId;
+    private Integer vehicleId;
+    private Integer contractId;
 
     public RentalDetail() {
     }
@@ -39,6 +41,14 @@ public class RentalDetail {
         this.timeTo = timeTo;
     }
 
+    public Integer getKmDriven() {
+        return kmDriven;
+    }
+
+    public void setKmDriven(Integer kmDriven) {
+        this.kmDriven = kmDriven;
+    }
+
     public Boolean getActive() {
         return active;
     }
@@ -47,11 +57,19 @@ public class RentalDetail {
         this.active = active;
     }
 
-    public Integer getCarId() {
-        return carId;
+    public Integer getVehicleId() {
+        return vehicleId;
     }
 
-    public void setCarId(Integer carId) {
-        this.carId = carId;
+    public void setVehicleId(Integer vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public Integer getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(Integer contractId) {
+        this.contractId = contractId;
     }
 }
