@@ -3,8 +3,10 @@ package hr.fer.ika.ikasus.controller;
 import hr.fer.ika.ikasus.DTO.incoming.CreateVehicleMaster;
 import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
+import hr.fer.ika.ikasus.DTO.outgoing.RatingInfo;
 import hr.fer.ika.ikasus.DTO.outgoing.VehicleMDInfo;
 import hr.fer.ika.ikasus.DTO.outgoing.VehicleMaster;
+import hr.fer.ika.ikasus.service.RatingService;
 import hr.fer.ika.ikasus.service.VehicleService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
@@ -24,14 +26,21 @@ import java.util.List;
 )
 public class VehicleController {
     private final VehicleService vehicleService;
+    private final RatingService ratingService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, RatingService ratingService) {
         this.vehicleService = vehicleService;
+        this.ratingService = ratingService;
     }
 
     @GetMapping
     public ResponseEntity<List<VehicleMaster>> getVehicles() {
         return ResponseEntity.ok(this.vehicleService.getVehicles());
+    }
+
+    @GetMapping("/{id}/ratings")
+    public ResponseEntity<List<RatingInfo>> getVehicleRatings(@PathVariable("id") Integer vehicleId) {
+        return ResponseEntity.ok(this.ratingService.getRatingsForVehicle(vehicleId));
     }
 
     @GetMapping("/{id}")
