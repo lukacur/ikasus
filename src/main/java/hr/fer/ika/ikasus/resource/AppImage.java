@@ -3,9 +3,7 @@ package hr.fer.ika.ikasus.resource;
 import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.base64.Base64;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
@@ -21,7 +19,7 @@ import java.util.Objects;
  */
 public class AppImage implements Closeable {
     public static final String STATIC_CONTENT_PREFIX = "./static" ;
-    public static final String CAR_IMAGE_ROOT = STATIC_CONTENT_PREFIX + "/static-content/images/cars/";
+    public static final String VEHICLE_IMAGE_ROOT = STATIC_CONTENT_PREFIX + "/static-content/images/vehicles/";
     public static final String SIGNATURE_IMAGE_ROOT =
             STATIC_CONTENT_PREFIX + "/static-content/images/private/signatures/";
 

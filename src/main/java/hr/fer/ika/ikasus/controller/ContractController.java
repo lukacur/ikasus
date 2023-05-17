@@ -76,7 +76,7 @@ public class ContractController {
     }
 
     @DeleteMapping
-    public ResponseEntity<CommonResponse> deleteContract(DeleteRequest<Integer> deleteRequest) {
+    public ResponseEntity<CommonResponse> deleteContract(@RequestBody DeleteRequest<Integer> deleteRequest) {
         boolean deleted = this.contractService.deleteContract(deleteRequest.getId());
 
         if (!deleted) {
