@@ -185,12 +185,15 @@ public class VehicleServiceImpl implements VehicleService {
                     VehicleMaster vehicleMaster = new VehicleMaster();
                     vehicleMaster.setId(v.getId());
                     vehicleMaster.setManufacturer(v.getProizvodjac());
+                    vehicleMaster.setKmDriven(v.getKilometraza());
                     if (v.getPutdoslike() != null) {
                         vehicleMaster.setImagePath(v.getPutdoslike().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
                     }
                     vehicleMaster.setRegistration(v.getRegistracija());
                     vehicleMaster.setName(v.getNaziv());
                     vehicleMaster.setPricePerDay(v.getDnevnacijena().doubleValue());
+                    vehicleMaster.setVehicleTypeId(v.getIdtip().getId());
+                    vehicleMaster.setLocationId(v.getIdlokacija().getId());
 
                     return vehicleMaster;
                 })
@@ -213,9 +216,12 @@ public class VehicleServiceImpl implements VehicleService {
             mdInfo.setImagePath(vehicle.getPutdoslike().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
         }
         mdInfo.setManufacturer(vehicle.getProizvodjac());
+        mdInfo.setKmDriven(vehicle.getKilometraza());
         mdInfo.setName(vehicle.getNaziv());
         mdInfo.setRegistration(vehicle.getRegistracija());
         mdInfo.setPricePerDay(vehicle.getDnevnacijena().doubleValue());
+        mdInfo.setVehicleTypeId(vehicle.getIdtip().getId());
+        mdInfo.setLocationId(vehicle.getIdlokacija().getId());
         mdInfo.setRentals(
                 vehicle.getNajams().stream()
                         .map(n -> {
@@ -231,7 +237,7 @@ public class VehicleServiceImpl implements VehicleService {
                                 rentalDetail.setTimeTo(Date.from(n.getVrijemedo()));
                             }
 
-                            rentalDetail.setCarId(vehicle.getId());
+                            rentalDetail.setVehicleId(vehicle.getId());
 
                             return rentalDetail;
                         })

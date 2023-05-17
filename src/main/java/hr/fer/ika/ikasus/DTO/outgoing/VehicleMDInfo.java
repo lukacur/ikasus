@@ -10,8 +10,11 @@ public class VehicleMDInfo {
     private String registration;
     private String name;
     private String manufacturer;
-    private String imagePath;
+    private Integer kmDriven;
     private Double pricePerDay;
+    private String imagePath;
+    private String vehicleTypeId;
+    private Integer locationId;
 
     private List<RentalDetail> rentals;
 
@@ -50,12 +53,12 @@ public class VehicleMDInfo {
         this.manufacturer = manufacturer;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public Integer getKmDriven() {
+        return kmDriven;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setKmDriven(Integer kmDriven) {
+        this.kmDriven = kmDriven;
     }
 
     public Double getPricePerDay() {
@@ -64,6 +67,30 @@ public class VehicleMDInfo {
 
     public void setPricePerDay(Double pricePerDay) {
         this.pricePerDay = pricePerDay;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getVehicleTypeId() {
+        return vehicleTypeId;
+    }
+
+    public void setVehicleTypeId(String vehicleTypeId) {
+        this.vehicleTypeId = vehicleTypeId;
+    }
+
+    public Integer getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
     }
 
     public List<RentalDetail> getRentals() {
