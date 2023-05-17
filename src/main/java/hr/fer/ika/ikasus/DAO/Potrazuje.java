@@ -2,6 +2,8 @@ package hr.fer.ika.ikasus.DAO;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "potrazuje")
 public class Potrazuje {
@@ -16,6 +18,28 @@ public class Potrazuje {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idzahtjev")
     private ZahtjevZaNajmom idzahtjev;
+
+    @Column(name = "potraznjaod", nullable = false)
+    private LocalDate potraznjaod;
+
+    @Column(name = "potraznjado", nullable = false)
+    private LocalDate potraznjado;
+
+    public LocalDate getPotraznjado() {
+        return potraznjado;
+    }
+
+    public void setPotraznjado(LocalDate potraznjado) {
+        this.potraznjado = potraznjado;
+    }
+
+    public LocalDate getPotraznjaod() {
+        return potraznjaod;
+    }
+
+    public void setPotraznjaod(LocalDate potraznjaod) {
+        this.potraznjaod = potraznjaod;
+    }
 
     public ZahtjevZaNajmom getIdzahtjev() {
         return idzahtjev;
@@ -41,5 +65,4 @@ public class Potrazuje {
         this.id = id;
     }
 
-    //TODO Reverse Engineering! Migrate other columns to the entity
 }
