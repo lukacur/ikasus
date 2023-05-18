@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="img-container">
+    <img src="assets/avatar.svg" alt="">
+    <h1>Jane Doe</h1>
+  </div>
+  <div class="flex">
+    <div class="controls">
+      <a routerLinkActive="link" routerLink="overview">OVERVIEW</a>
+      <a routerLinkActive="link" routerLink="pending">PENDING REQUESTS</a>
+      <a routerLinkActive="link" routerLink="active">ACTIVE CONTRACTS</a>
+      <a routerLinkActive="link" routerLink="history">HISTORY</a>
+    </div>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+@import "../../../assets/style_guide.scss";
+
+nav {
+  width: 100%;
+  background: $mint;
+  padding: 0.5rem;
+
+  div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.7rem;
+    height: 45px;
+  }
+
+  a.first {
+    margin-right: 1rem;
+    font-size: 24px;
+    font-weight: bolder;
+  }
+}
+
+a {
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+  padding: 0.375rem;
+  border-radius: 7px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    color: $charcoal;
+  }
+
+  &.link {
+    background-color: $charcoal;
+    color: white;
+  }
+
+  &.user {
+    margin-left: auto;
+    margin-right: 10px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+}
+
+div.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.7rem;
+  background-color: $mint;
+}

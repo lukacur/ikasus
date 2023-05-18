@@ -1,0 +1,10 @@
+<div class="background" [ngClass]="{'active': isActive === true}">
+  <div class="modal">
+    <h1>{{ title }}</h1>
+    <ng-content></ng-content>
+    <div class="btn-group">
+      <button class="cancel" (click)="closeModal()">Cancel</button>
+      <button (click)="emitAction()">{{ actionButtonTitle }}</button>
+    </div>
+  </div>
+</div>

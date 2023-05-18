@@ -1,0 +1,56 @@
+/* You can add global styles to this file, and also import other style files */
+@import "./assets/style_guide.scss";
+
+@font-face {
+  font-family: "Cantarell";
+  src: url("./assets/Cantarell-VF.otf");
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+* {
+  font-family: "Cantarell";
+  box-sizing: border-box;
+}
+
+button {
+  color: white;
+  background-color: $mint;
+  border: none;
+  border-radius: 7px;
+  font-size: medium;
+  font-weight: bold;
+  width: fit-content;
+  padding: 0.5rem 0.875rem;
+  cursor: pointer;
+
+  background: linear-gradient(to right, $charcoal 50%, $mint 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: all .35s ease-out;
+
+  &:hover {
+    background-position: left bottom;
+  }
+}
+
+label {
+  font-size: 15px;
+  color: #212121;
+  margin-bottom: 5px;
+}
+
+input {
+  font-size: large;
+  padding: 0.6rem 1rem;
+  background-color: #f1f1f1;
+  border: 0.5px solid #f1f1f1;
+
+  &:focus {
+    outline: none;
+    border: 0.5px solid $mint;
+  }
+}
