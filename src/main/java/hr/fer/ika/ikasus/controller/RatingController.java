@@ -6,14 +6,11 @@ import hr.fer.ika.ikasus.DTO.incoming.UpdateRatingInfo;
 import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
 import hr.fer.ika.ikasus.DTO.outgoing.RatingInfo;
 import hr.fer.ika.ikasus.config.security.Authorities;
-import hr.fer.ika.ikasus.config.security.dev.DevUserDetails;
 import hr.fer.ika.ikasus.service.RatingService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,21 +31,13 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
-    private Integer getCustomerId(Authentication auth) {
-        if (!(auth.getPrincipal() instanceof DevUserDetails details) ||
-                details.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .noneMatch(strAuthority -> strAuthority.equals(Authorities.CUSTOMER_AUTHORITY))
-        ) {
-            return null;
-        }
-
-        return details.getId();
-    }
-
     @GetMapping
     public ResponseEntity<List<RatingInfo>> getRatingsByCustomer(Authentication auth) {
-        Integer customerId = this.getCustomerId(auth);
+        if (!Authorities.hasCustomerAuthority(auth)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Integer customerId = Authorities.extractSubjectId(auth);
 
         if (customerId == null) {
             return ResponseEntity.badRequest().build();
@@ -82,7 +71,11 @@ public class RatingController {
             @PathVariable("id") Integer ratingId,
             @RequestBody UpdateRatingInfo updateRatingInfo
     ) {
-        Integer customerId = this.getCustomerId(auth);
+        if (!Authorities.hasCustomerAuthority(auth)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Integer customerId = Authorities.extractSubjectId(auth);
 
         if (customerId == null) {
             CommonResponse errResp = new CommonResponse();
@@ -111,7 +104,11 @@ public class RatingController {
             Authentication auth,
             @RequestBody CreateRatingInfo createRatingInfo
     ) {
-        Integer customerId = this.getCustomerId(auth);
+        if (!Authorities.hasCustomerAuthority(auth)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Integer customerId = Authorities.extractSubjectId(auth);
 
         if (customerId == null) {
             CommonResponse errResp = new CommonResponse();
@@ -139,7 +136,11 @@ public class RatingController {
             Authentication auth,
             @RequestBody DeleteRequest<Integer> deleteRequest
     ) {
-        Integer customerId = this.getCustomerId(auth);
+        Integer customerId = null;
+
+        if (Authorities.hasCustomerAuthority(auth)) {
+            customerId = Authorities.extractSubjectId(auth);
+        }
 
         boolean deleted = this.ratingService.deleteRating(customerId, deleteRequest.getId());
 
