@@ -34,7 +34,7 @@ public class RentalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RentalDetail> getRental(@PathVariable Integer rentalId) {
+    public ResponseEntity<RentalDetail> getRental(@PathVariable("id") Integer rentalId) {
         RentalDetail rd = this.rentalService.getRentalDetail(rentalId);
 
         if (rd == null) {

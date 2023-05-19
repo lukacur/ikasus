@@ -15,6 +15,7 @@ public class RentalRequestMaster {
     private Date timeProcessed;
     private Integer employeeProcessedId;
     private Integer customerRequestedId;
+    private String customerFullName;
 
     public RentalRequestMaster() {
     }
@@ -81,5 +82,13 @@ public class RentalRequestMaster {
 
     public void setCustomerRequestedId(Integer customerRequestedId) {
         this.customerRequestedId = customerRequestedId;
+    }
+
+    public String getCustomerFullName() {
+        return customerFullName;
+    }
+
+    public void setCustomerFullName(String customerFullName) {
+        this.customerFullName = customerFullName;
     }
 }

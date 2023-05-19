@@ -32,7 +32,10 @@ public class RentalRequestServiceImpl implements RentalRequestService {
         requestMaster.setProcessed(rr.getObraden());
         requestMaster.setStatus(rr.getStatus());
         requestMaster.setTimeCreated(Date.from(rr.getVrijemezahtjeva()));
-        requestMaster.setCustomerRequestedId(rr.getIdunajmitelj().getId());
+
+        Unajmitelj customer = rr.getIdunajmitelj();
+        requestMaster.setCustomerRequestedId(customer.getId());
+        requestMaster.setCustomerFullName(customer.getIme() + " " + customer.getPrezime());
         if (rr.getIdiznajmljivac() != null) {
             requestMaster.setEmployeeProcessedId(rr.getIdiznajmljivac().getId());
         }
