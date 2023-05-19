@@ -41,23 +41,19 @@ export class LoginComponent implements OnInit {
     const type = this.loginForm.get("type")!.value!;
 
     this.error = undefined;
-    let errorString = "";
-
     let authObservable: Observable<Customer>;
-
-    errorString = "Invalid credentials";
     authObservable = this.authService.login(email, password, Number(type));
 
 
     authObservable.subscribe({
       next: (respData) => {
         if (respData === null)
-          throw new Error(errorString)
+          throw new Error("Something went wrong.")
         else
           this.router.navigate(['/']);
       },
       error: (error) => {
-        this.error = error;
+        this.error = error.message;
       }
     });
 

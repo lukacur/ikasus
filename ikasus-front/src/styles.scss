@@ -43,7 +43,7 @@ label {
   margin-bottom: 5px;
 }
 
-input {
+input, select {
   font-size: large;
   padding: 0.6rem 1rem;
   background-color: #f1f1f1;
@@ -52,5 +52,25 @@ input {
   &:focus {
     outline: none;
     border: 0.5px solid $mint;
+  }
+}
+
+div.grid {
+  @media (max-width: 1200px) {
+    grid-template-columns: auto auto !important;
+  }
+
+  @media (max-width: 800px) {
+    grid-template-columns: auto !important;
+  }
+}
+
+div.input-group {
+  @media (max-width: 1600px) {
+    grid-template-columns: auto auto !important;
+  }
+
+  @media (max-width: 1200px) {
+    grid-template-columns: auto !important;
   }
 }

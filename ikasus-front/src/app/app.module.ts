@@ -11,8 +11,11 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule  } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule  } from '@angular/common/http';
 import { RequestsAndContractsComponent } from './requests-and-contracts/requests-and-contracts.component';
+import { AuthInterceptor } from './auth.interceptor';
+import { VehiclesComponent } from './vehicles/vehicles.component';
+import { VehicleDetailsComponent } from './vehicles/vehicle-details/vehicle-details.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,9 @@ import { RequestsAndContractsComponent } from './requests-and-contracts/requests
     CardListComponent,
     SearchBarComponent,
     LoginComponent,
-    RequestsAndContractsComponent
+    RequestsAndContractsComponent,
+    VehicleDetailsComponent,
+    VehiclesComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +37,9 @@ import { RequestsAndContractsComponent } from './requests-and-contracts/requests
     CommonModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

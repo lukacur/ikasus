@@ -1,33 +1,42 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { Customer, Employee, Manager } from './models/user.model';
 import { HttpClient } from '@angular/common/http';
 import { Routes } from './routes';
+import * as jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user = new BehaviorSubject<Customer | Employee | Manager | undefined>(undefined);
+  user = new BehaviorSubject<{ token: string } | undefined>(undefined);
 
   constructor(private http: HttpClient, private router: Router) { }
+
+  decodeToken() {
+    if (!this.user.value) return undefined;
+    else {
+      const decoded: any = jwt_decode.default(this.user.value!.token);
+      if (decoded.userAuthority == 'MANAGER') return 2;
+      else if (decoded.userAuthority == 'EMPLOYEE') return 1;
+      else if (decoded.userAuthority == 'CUSTOMER') return 0;
+    }
+
+    return undefined;
+  }
 
   login(username: string, password: string, type: number): Observable<any> {
     let url = "";
 
     if (type == 1)
-      url = Routes.loginUser
+      url = Routes.loginCustomer
     else if (type == 2)
       url = Routes.loginEmployee
     else
       url = Routes.loginManager
 
     return this.http.post(Routes.ORIGIN + url,
-      { principal: username, credentials: password
-    }, {
-      headers: { "Access-Control-Allow-Origin": "*" }
-    })
+      { principal: username, credentials: password})
     .pipe(tap(data => {
       this.authenticate(data);
     }))
@@ -40,16 +49,15 @@ export class AuthService {
   }
 
   autoLogin() {
-    const userData: Customer = JSON.parse(localStorage.getItem("User")!);
+    const userData = JSON.parse(localStorage.getItem("User")!);
     if (!userData) return;
-    const storedUser = userData;
-    this.user.next(storedUser);
+    this.user.next(userData);
   }
 
 
   private authenticate(user: any) {
-    console.log(user);
-    this.user.next(user);
+
+    this.user.next({ token: user.token });
     localStorage.setItem("User", JSON.stringify(user));
   }
 }

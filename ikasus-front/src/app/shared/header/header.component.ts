@@ -1,7 +1,6 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { Customer, Employee, Manager } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-header',
@@ -13,8 +12,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public getScreenHeight: number = window.innerHeight;
   public isAuthenticated: boolean = false;
   public collapsed: boolean = true;
+  public role: number | undefined;
 
-  user: Customer | Employee | Manager | undefined;
+  public user: { token: string } | undefined;
   private userSubscription: Subscription | undefined;
 
   constructor(private authService: AuthService) { }
@@ -23,6 +23,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userSubscription = this.authService.user.subscribe(user => {
       this.isAuthenticated = !!user;
       this.user = user;
+      this.role = this.authService.decodeToken();
     });
   }
 

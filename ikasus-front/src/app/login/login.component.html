@@ -14,7 +14,7 @@
       <div class="flex">
         <div>
           <input type="radio" formControlName="type" name="type" value="1" id="1">
-          <label for="1">User</label>
+          <label for="1">Customer</label>
         </div>
         <div>
           <input type="radio" formControlName="type" name="type" value="2" id="2">
@@ -28,6 +28,10 @@
       <div class="btn-group">
         <button type="submit">Login</button>
         <!-- <button type="button" (click)="toggle()">Switch to signup</button> -->
+      </div>
+
+      <div class="alert" *ngIf="error">
+        {{"*" + error}}
       </div>
     </form>
 
@@ -54,8 +58,6 @@
         <button type="button" (click)="toggle()">Switch to login</button>
       </div>
     </form> -->
-    <div class="alert" *ngIf="error">
-      {{"*" + error}}
-    </div>
+
   </div>
 </div>

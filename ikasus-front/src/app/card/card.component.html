@@ -1,11 +1,11 @@
-<div class="card">
-  <img src="assets/skoda.jpg" alt="">
+<div class="card" *ngIf="vehicle">
+  <img src="{{vehicle.imagePath ? vehicle.imagePath : 'assets/carnotfound.jpg'}}" alt="">
   <div class="text">
-    <p class="header">Škoda Octavia 2022</p>
-    <span>Limousine</span>
+    <p class="header">{{vehicle.name}}</p>
+    <span>{{ type }}</span>
     <div class="flex">
-      <p>100€ / day</p>
-      <button (click)="emit()">Rent</button>
+      <p>{{ vehicle.pricePerDay }}€ / day</p>
+      <button (click)="emit(vehicle.id)">Add</button>
     </div>
   </div>
 </div>

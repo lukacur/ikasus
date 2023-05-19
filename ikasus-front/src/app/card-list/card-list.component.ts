@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Vehicle } from '../vehicles/vehicle.models';
 
 @Component({
   selector: 'app-card-list',
@@ -7,7 +8,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class CardListComponent implements OnInit {
   @Output() clickEmitter = new EventEmitter<void>();
-  cars = [0, 1, 2, 3, 4]
+  @Input() cars: Vehicle[] = [];
 
   constructor() { }
 

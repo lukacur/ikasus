@@ -1,0 +1,97 @@
+@import "../../../assets/style_guide.scss";
+
+.container {
+  display: flex;
+  width: 100%;
+  padding: 3rem 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+div.input-group {
+  width: 100%;
+  background-color: white;
+  margin-top: 1rem;
+  border-radius: 7px;
+  padding: 3rem 5rem;
+  display: grid;
+  row-gap: 3rem;
+  text-align: center;
+  grid-template-columns: auto auto auto;
+
+  div {
+    label {
+      font-weight: bold;
+      display: block;
+    }
+
+    input, select {
+      border-radius: 7px;
+      width: 260px;
+    }
+  }
+
+}
+
+form.form {
+  width: fit-content;
+  min-width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 2px 9px 0px #e8e8e8;
+
+}
+
+div.btns {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 1rem;
+
+  button {
+    background: $mint;
+
+    &.delete {
+      background: $bittersweet;
+    }
+  }
+}
+
+table {
+  width: 60%;
+  margin-top: 4rem;
+  border: 1px solid $charcoal;
+
+  thead {
+    color: white;
+    background-color: $charcoal;
+    border-collapse: collapse;
+
+    th {
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  td {
+    padding: 0.5rem;
+    text-align: center;
+
+    .btns {
+      justify-content: flex-start;
+      gap: 5px;
+      padding: 0;
+
+      button {
+        background-color: $jasmine;
+
+        &.delete {
+          background: $bittersweet;
+        }
+      }
+    }
+  }
+}
