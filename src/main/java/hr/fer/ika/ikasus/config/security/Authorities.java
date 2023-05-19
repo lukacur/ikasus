@@ -14,12 +14,22 @@ public class Authorities {
 
     private Authorities() {}
 
-    public static boolean isParsable(Authentication auth) {
-        return auth != null && auth.getPrincipal() instanceof DevUserDetails;
+    public static DevUserDetails getDetails(Authentication auth) {
+        if (notParsable(auth)) {
+            return null;
+        }
+
+        return (DevUserDetails) auth.getPrincipal();
+    }
+
+    private static boolean notParsable(Authentication auth) {
+        return auth == null || !(auth.getPrincipal() instanceof DevUserDetails);
     }
 
     public static boolean hasCustomerAuthority(Authentication auth) {
-        if (auth == null || !(auth.getPrincipal() instanceof DevUserDetails details)) {
+        DevUserDetails details = getDetails(auth);
+
+        if (details == null) {
             return false;
         }
 
@@ -29,7 +39,9 @@ public class Authorities {
     }
 
     public static boolean hasManagerAuthority(Authentication auth) {
-        if (auth == null || !(auth.getPrincipal() instanceof DevUserDetails details)) {
+        DevUserDetails details = getDetails(auth);
+
+        if (details == null) {
             return false;
         }
 
@@ -39,7 +51,9 @@ public class Authorities {
     }
 
     public static boolean hasEmployeeAuthority(Authentication auth) {
-        if (auth == null || !(auth.getPrincipal() instanceof DevUserDetails details)) {
+        DevUserDetails details = getDetails(auth);
+
+        if (details == null) {
             return false;
         }
 
@@ -48,12 +62,14 @@ public class Authorities {
                 .anyMatch(strAuthority -> strAuthority.equals(Authorities.EMPLOYEE_AUTHORITY));
     }
 
-    public static Integer extractSubjectId(Authentication auth) {
-        if (!isParsable(auth)) {
-            return null;
-        }
+    public static boolean hasManagerOrEmployeeAuthority(Authentication auth) {
+        return hasManagerAuthority(auth) || hasEmployeeAuthority(auth);
+    }
 
-        if (auth.getPrincipal() instanceof DevUserDetails details) {
+    public static Integer extractSubjectId(Authentication auth) {
+        DevUserDetails details = getDetails(auth);
+
+        if (details != null) {
             return details.getId();
         }
 
