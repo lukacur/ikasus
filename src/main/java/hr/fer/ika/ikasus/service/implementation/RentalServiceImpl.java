@@ -99,7 +99,7 @@ public class RentalServiceImpl implements RentalService {
             return false;
         }
 
-        return vehicleRentals.stream().noneMatch(r -> r.getAktivan() && detail.getActive()) &&
+        return /*vehicleRentals.stream().noneMatch(r -> r.getAktivan() && detail.getActive()) &&*/
                 vehicleRentals.stream().noneMatch(r -> {
                     Date rFrom = Date.from(r.getVrijemeod());
                     Date rTo;

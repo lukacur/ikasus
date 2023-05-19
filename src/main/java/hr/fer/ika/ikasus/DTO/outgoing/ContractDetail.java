@@ -11,6 +11,7 @@ public class ContractDetail {
     private String title;
     private Boolean signed;
     private Date signedOn;
+    private String signaturePath;
     private double price;
     private Integer rentalRequestId;
 
@@ -55,6 +56,14 @@ public class ContractDetail {
 
     public void setSignedOn(Date signedOn) {
         this.signedOn = signedOn;
+    }
+
+    public String getSignaturePath() {
+        return signaturePath;
+    }
+
+    public void setSignaturePath(String signaturePath) {
+        this.signaturePath = signaturePath;
     }
 
     public double getPrice() {

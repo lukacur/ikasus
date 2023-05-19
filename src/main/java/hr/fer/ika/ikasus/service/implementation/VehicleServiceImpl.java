@@ -223,7 +223,9 @@ public class VehicleServiceImpl implements VehicleService {
         mdInfo.setRegistration(vehicle.getRegistracija());
         mdInfo.setPricePerDay(vehicle.getDnevnacijena().doubleValue());
         mdInfo.setVehicleTypeId(vehicle.getIdtip().getId());
-        mdInfo.setLocationId(vehicle.getIdlokacija().getId());
+        if (vehicle.getIdlokacija() != null) {
+            mdInfo.setLocationId(vehicle.getIdlokacija().getId());
+        }
         mdInfo.setRentals(
                 vehicle.getNajams().stream()
                         .map(n -> {

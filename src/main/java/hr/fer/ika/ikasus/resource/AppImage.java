@@ -24,6 +24,7 @@ public class AppImage implements Closeable {
             STATIC_CONTENT_PREFIX + "/static-content/images/private/signatures/";
 
     private final String imagePath;
+    private String contentType;
     private BufferedImage imageData;
 
     private AppImage(String imagePath) {
@@ -98,6 +99,18 @@ public class AppImage implements Closeable {
         }
 
         this.imageData = ImageIO.read(image);
+
+        try {
+            this.contentType = Files.probeContentType(Path.of(image.toURI()));
+        } catch (URISyntaxException ignore) {}
+    }
+
+    public BufferedImage getImageData() {
+        return imageData;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     public void save() throws IOException {
@@ -125,7 +138,14 @@ public class AppImage implements Closeable {
             }
         }
 
-        ImageIO.write(this.imageData, "jpeg", imagePath.toFile());
+        String format = switch (this.imagePath.substring(this.imagePath.lastIndexOf("."))) {
+            case "png" -> "png";
+            case "tiff" -> "tiff";
+            case "bmp" -> "bmp";
+            default -> "jpeg";
+        };
+
+        ImageIO.write(this.imageData, format, imagePath.toFile());
 
         this.imageData.flush();
     }

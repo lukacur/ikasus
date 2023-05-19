@@ -1,6 +1,7 @@
 package hr.fer.ika.ikasus.config.security.dev;
 
 import hr.fer.ika.ikasus.authorization.JWTRequestFilter;
+import hr.fer.ika.ikasus.authorization.resources.ResourcesRequestFilter;
 import hr.fer.ika.ikasus.config.security.Authorities;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +27,11 @@ import java.util.List;
 @Configuration
 public class WebSecurityDevConfig {
     private final JWTRequestFilter filter;
+    private final ResourcesRequestFilter resourcesRequestFilter;
 
-    public WebSecurityDevConfig(JWTRequestFilter filter) {
+    public WebSecurityDevConfig(JWTRequestFilter filter, ResourcesRequestFilter resourcesRequestFilter) {
         this.filter = filter;
+        this.resourcesRequestFilter = resourcesRequestFilter;
     }
 
     @Bean
@@ -40,6 +43,7 @@ public class WebSecurityDevConfig {
                 .formLogin()
                     .disable()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(resourcesRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(
                         (req, resp, ex) -> {

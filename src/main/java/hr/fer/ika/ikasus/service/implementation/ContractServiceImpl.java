@@ -1,18 +1,26 @@
 package hr.fer.ika.ikasus.service.implementation;
 
-import hr.fer.ika.ikasus.DAO.Ugovor;
-import hr.fer.ika.ikasus.DAO.ZahtjevZaNajmom;
+import hr.fer.ika.ikasus.DAO.*;
+import hr.fer.ika.ikasus.DTO.incoming.CreateRentalDetail;
+import hr.fer.ika.ikasus.DTO.incoming.SignContractRequest;
 import hr.fer.ika.ikasus.DTO.incoming.UpdateContractDetail;
 import hr.fer.ika.ikasus.DTO.outgoing.ContractDetail;
 import hr.fer.ika.ikasus.DTO.outgoing.ContractMaster;
+import hr.fer.ika.ikasus.repository.IzdavanjeRepository;
 import hr.fer.ika.ikasus.repository.UgovorRepository;
 import hr.fer.ika.ikasus.repository.ZahtjevZaNajmomRepository;
+import hr.fer.ika.ikasus.resource.AppImage;
 import hr.fer.ika.ikasus.service.ContractService;
+import hr.fer.ika.ikasus.service.RentalService;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,11 +30,21 @@ import java.util.stream.Collectors;
 @Service
 public class ContractServiceImpl implements ContractService {
     private final UgovorRepository ugovorRepository;
+    private final IzdavanjeRepository izdavanjeRepository;
     private final ZahtjevZaNajmomRepository zahtjevZaNajmomRepository;
 
-    public ContractServiceImpl(UgovorRepository ugovorRepository, ZahtjevZaNajmomRepository zahtjevZaNajmomRepository) {
+    private final RentalService rentalService;
+
+    public ContractServiceImpl(
+            UgovorRepository ugovorRepository,
+            IzdavanjeRepository izdavanjeRepository,
+            ZahtjevZaNajmomRepository zahtjevZaNajmomRepository,
+            RentalService rentalService
+    ) {
         this.ugovorRepository = ugovorRepository;
+        this.izdavanjeRepository = izdavanjeRepository;
         this.zahtjevZaNajmomRepository = zahtjevZaNajmomRepository;
+        this.rentalService = rentalService;
     }
 
     @Override
@@ -43,20 +61,33 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ContractDetail getDetailsFor(Integer contractId) {
-        Optional<Ugovor> contractOpt = this.ugovorRepository.findById(contractId);
+    public List<ContractMaster> getContractMastersForCustomer(Integer customerId) {
+        return this.ugovorRepository.findAll().stream()
+                .filter((con) -> con.getIzdavanjes().stream().anyMatch((i) ->
+                                i.getIdunajmitelj() != null &&
+                                        Objects.equals(i.getIdunajmitelj().getId(), customerId)
+                        )
+                )
+                .map(con -> {
+                    ContractMaster master = new ContractMaster();
+                    master.setId(con.getId());
+                    master.setTitle(con.getNaslov());
 
-        if (contractOpt.isEmpty()) {
-            return null;
-        }
+                    return master;
+                })
+                .collect(Collectors.toList());
+    }
 
-        Ugovor contract = contractOpt.get();
-
+    private static ContractDetail getDetailsFor(Ugovor contract) {
         ContractDetail detail = new ContractDetail();
         detail.setContent(contract.getSadrzaj());
         detail.setContractTag(contract.getOznugovor());
         detail.setTitle(contract.getNaslov());
         detail.setSigned(contract.getVrijemepotpisa() != null);
+
+        if (contract.getPutdopotpisa() != null) {
+            detail.setSignaturePath(contract.getPutdopotpisa().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
+        }
         detail.setPrice(contract.getUgovorenacijena().doubleValue());
 
         if (contract.getIdzahtjev() != null) {
@@ -68,6 +99,40 @@ public class ContractServiceImpl implements ContractService {
         }
 
         return detail;
+    }
+
+    @Override
+    public ContractDetail getDetailsFor(Integer contractId) {
+        if (contractId == null) {
+            return null;
+        }
+
+        Optional<Ugovor> contractOpt = this.ugovorRepository.findById(contractId);
+
+        if (contractOpt.isEmpty()) {
+            return null;
+        }
+
+        return getDetailsFor(contractOpt.get());
+    }
+
+    @Override
+    public ContractDetail getDetailsFor(Integer customerId, Integer contractId) {
+        if (contractId == null) {
+            return null;
+        }
+
+        Optional<Ugovor> contractOpt = this.ugovorRepository.findById(contractId)
+                .filter(c -> c.getIzdavanjes().stream().anyMatch(i ->
+                                i.getIdunajmitelj() != null && Objects.equals(i.getIdunajmitelj().getId(), customerId)
+                        )
+                );
+
+        if (contractOpt.isEmpty()) {
+            return null;
+        }
+
+        return getDetailsFor(contractOpt.get());
     }
 
     @Override
@@ -163,5 +228,93 @@ public class ContractServiceImpl implements ContractService {
         this.ugovorRepository.delete(contractOpt.get());
 
         return true;
+    }
+
+    private void activateContractRentalRequests(Ugovor contract) {
+        ZahtjevZaNajmom rentalRequest = contract.getIdzahtjev();
+
+        if (rentalRequest == null) {
+            return;
+        }
+
+        for (Potrazuje rentalReqPart : rentalRequest.getPotrazujes()) {
+            CreateRentalDetail rentalDetail = new CreateRentalDetail();
+            rentalDetail.setVehicleId(rentalReqPart.getIdvozilo().getId());
+            rentalDetail.setContractId(contract.getId());
+            rentalDetail.setTimeFrom(
+                    Date.from(rentalReqPart.getPotraznjaod().atStartOfDay(ZoneId.systemDefault()).toInstant())
+            );
+            rentalDetail.setTimeTo(
+                    Date.from(rentalReqPart.getPotraznjado().atStartOfDay(ZoneId.systemDefault()).toInstant())
+            );
+            rentalDetail.setKmDriven(0);
+            rentalDetail.setActive(true);
+
+            this.rentalService.createRental(rentalDetail);
+        }
+    }
+
+    @Override
+    public boolean signContract(Integer customerId, SignContractRequest signContractRequest) {
+        if (customerId == null || signContractRequest == null ||
+                signContractRequest.getContractId() == null || signContractRequest.getSignatureBase64Encoded() == null
+        ) {
+            return false;
+        }
+
+        Optional<Ugovor> contrOpt = this.ugovorRepository.findById(signContractRequest.getContractId());
+
+        if (contrOpt.isEmpty()) {
+            return false;
+        }
+
+        Ugovor contract = contrOpt.get();
+
+        if (contract.getVrijemepotpisa() != null) {
+            return false;
+        }
+
+        List<Izdavanje> issueOpt = this.izdavanjeRepository.findByIdugovor(contract).stream()
+                .filter(is -> is.getIdunajmitelj() != null && Objects.equals(is.getIdunajmitelj().getId(), customerId))
+                .collect(Collectors.toList());
+
+        if (issueOpt.isEmpty()) {
+            return false;
+        }
+
+        AppImage.AppImageBuilder builder = AppImage.fromBase64Builder();
+
+        String imagePath = AppImage.SIGNATURE_IMAGE_ROOT + "signature_" + contract.getId() + "_" + customerId + ".png";
+        AppImage signatureImage = builder.withImageData(signContractRequest.getSignatureBase64Encoded())
+                .withImagePath(imagePath)
+                .build();
+        try {
+            signatureImage.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        contract.setPutdopotpisa(imagePath);
+        contract.setVrijemepotpisa(Instant.now());
+
+        if (signContractRequest.getTimeSigned() != null) {
+            contract.setVrijemepotpisa(signContractRequest.getTimeSigned().toInstant());
+        }
+
+        this.ugovorRepository.save(contract);
+
+        this.activateContractRentalRequests(contract);
+
+        return true;
+    }
+
+    @Override
+    public boolean canViewSignature(Integer customerId, String pathToSignature) {
+        if (customerId == null || pathToSignature == null) {
+            return false;
+        }
+
+        return this.ugovorRepository.canViewSignature(customerId, pathToSignature);
     }
 }
