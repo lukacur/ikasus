@@ -37,6 +37,17 @@ public class ZahtjevZaNajmom {
     @OneToMany(mappedBy = "idzahtjev")
     private Set<Potrazuje> potrazujes = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "idzahtjev")
+    private Set<Ugovor> ugovors = new LinkedHashSet<>();
+
+    public Set<Ugovor> getUgovors() {
+        return ugovors;
+    }
+
+    public void setUgovors(Set<Ugovor> ugovors) {
+        this.ugovors = ugovors;
+    }
+
     public Set<Potrazuje> getPotrazujes() {
         return potrazujes;
     }

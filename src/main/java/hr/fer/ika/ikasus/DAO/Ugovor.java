@@ -39,6 +39,18 @@ public class Ugovor {
     @OneToMany(mappedBy = "idugovor")
     private Set<Najam> najams = new LinkedHashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idzahtjev")
+    private ZahtjevZaNajmom idzahtjev;
+
+    public ZahtjevZaNajmom getIdzahtjev() {
+        return idzahtjev;
+    }
+
+    public void setIdzahtjev(ZahtjevZaNajmom idzahtjev) {
+        this.idzahtjev = idzahtjev;
+    }
+
     public Set<Najam> getNajams() {
         return najams;
     }

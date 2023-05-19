@@ -23,6 +23,8 @@ import java.util.List;
         produces = { MediaType.APPLICATION_JSON_VALUE }
 )
 public class ContractController {
+    public static final String ROOT_PATH = "/api/authenticated/contracts";
+
     private final ContractService contractService;
 
     public ContractController(ContractService contractService) {
