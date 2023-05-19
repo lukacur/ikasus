@@ -1,5 +1,6 @@
 package hr.fer.ika.ikasus.controller;
 
+import hr.fer.ika.ikasus.DTO.incoming.AvailableVehicleFilter;
 import hr.fer.ika.ikasus.DTO.incoming.CreateVehicleMaster;
 import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
@@ -36,6 +37,13 @@ public class VehicleController {
     @GetMapping
     public ResponseEntity<List<VehicleMaster>> getVehicles() {
         return ResponseEntity.ok(this.vehicleService.getVehicles());
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<VehicleMaster>> getAvailableVehicles(
+            @RequestBody AvailableVehicleFilter availableVehicleFilter
+    ) {
+        return ResponseEntity.ok(this.vehicleService.getAvailableVehicles(availableVehicleFilter));
     }
 
     @GetMapping("/{id}/ratings")

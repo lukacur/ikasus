@@ -3,6 +3,7 @@ package hr.fer.ika.ikasus.service.implementation;
 import hr.fer.ika.ikasus.DAO.Lokacija;
 import hr.fer.ika.ikasus.DAO.TipVozila;
 import hr.fer.ika.ikasus.DAO.Vozilo;
+import hr.fer.ika.ikasus.DTO.incoming.AvailableVehicleFilter;
 import hr.fer.ika.ikasus.DTO.incoming.CreateVehicleMaster;
 import hr.fer.ika.ikasus.DTO.outgoing.VehicleMDInfo;
 import hr.fer.ika.ikasus.DTO.outgoing.VehicleMaster;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +32,25 @@ public class VehicleServiceImpl implements VehicleService {
     private final VoziloRepository voziloRepository;
     private final TipVozilaRepository tipVozilaRepository;
     private final LokacijaRepository lokacijaRepository;
+
+    private final Function<Vozilo, VehicleMaster> vehicleMasterMapper = v -> {
+        VehicleMaster vehicleMaster = new VehicleMaster();
+        vehicleMaster.setId(v.getId());
+        vehicleMaster.setManufacturer(v.getProizvodjac());
+        vehicleMaster.setKmDriven(v.getKilometraza());
+        if (v.getPutdoslike() != null) {
+            vehicleMaster.setImagePath(v.getPutdoslike().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
+        }
+        vehicleMaster.setRegistration(v.getRegistracija());
+        vehicleMaster.setName(v.getNaziv());
+        vehicleMaster.setPricePerDay(v.getDnevnacijena().doubleValue());
+        vehicleMaster.setVehicleTypeId(v.getIdtip().getId());
+        if (v.getIdlokacija() != null) {
+            vehicleMaster.setLocationId(v.getIdlokacija().getId());
+        }
+
+        return vehicleMaster;
+    };
 
     public VehicleServiceImpl(
             VoziloRepository voziloRepository,
@@ -181,24 +202,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public List<VehicleMaster> getVehicles() {
         return this.voziloRepository.findAll().stream()
-                .map(v -> {
-                    VehicleMaster vehicleMaster = new VehicleMaster();
-                    vehicleMaster.setId(v.getId());
-                    vehicleMaster.setManufacturer(v.getProizvodjac());
-                    vehicleMaster.setKmDriven(v.getKilometraza());
-                    if (v.getPutdoslike() != null) {
-                        vehicleMaster.setImagePath(v.getPutdoslike().replace(AppImage.STATIC_CONTENT_PREFIX, ""));
-                    }
-                    vehicleMaster.setRegistration(v.getRegistracija());
-                    vehicleMaster.setName(v.getNaziv());
-                    vehicleMaster.setPricePerDay(v.getDnevnacijena().doubleValue());
-                    vehicleMaster.setVehicleTypeId(v.getIdtip().getId());
-                    if (v.getIdlokacija() != null) {
-                        vehicleMaster.setLocationId(v.getIdlokacija().getId());
-                    }
-
-                    return vehicleMaster;
-                })
+                .map(this.vehicleMasterMapper)
                 .collect(Collectors.toList());
     }
 
@@ -266,5 +270,20 @@ public class VehicleServiceImpl implements VehicleService {
         this.voziloRepository.delete(v.get());
 
         return true;
+    }
+
+    @Override
+    public List<VehicleMaster> getAvailableVehicles(AvailableVehicleFilter availableVehicleFilter) {
+        List<Vozilo> availableVehicles = this.voziloRepository.getAvailable(
+                availableVehicleFilter.getFrom().toInstant(),
+                availableVehicleFilter.getTo().toInstant()
+        );
+
+        return availableVehicles.stream()
+                .filter(v -> availableVehicleFilter.getMaxPricePerDay() == null || v.getDnevnacijena() == null ||
+                        v.getDnevnacijena().doubleValue() <= availableVehicleFilter.getMaxPricePerDay()
+                )
+                .map(this.vehicleMasterMapper)
+                .collect(Collectors.toList());
     }
 }
