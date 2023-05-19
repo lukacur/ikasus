@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface ObavijestRepository extends JpaRepository<Obavijest, ObavijestId> {
@@ -31,4 +32,19 @@ public interface ObavijestRepository extends JpaRepository<Obavijest, ObavijestI
         nativeQuery = true
     )
     Integer getNextIdForRental(@Param("rentalid") Integer rentalId);
+
+    @Query(value =
+        """
+        SELECT EXISTS (
+            SELECT o
+            FROM Obavijest o
+            WHERE o.idnajam.id = :rentalid AND
+                    o.vrijeme BETWEEN :begindate AND CURRENT_DATE
+        )
+        """
+    )
+    boolean wasNotifiedRecently(
+            @Param("rentalid") Integer rentalId,
+            @Param("begindate") Instant beginDate
+    );
 }

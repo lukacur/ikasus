@@ -3,6 +3,7 @@ package hr.fer.ika.ikasus.service.implementation;
 import hr.fer.ika.ikasus.DAO.Najam;
 import hr.fer.ika.ikasus.DAO.Obavijest;
 import hr.fer.ika.ikasus.DAO.ObavijestId;
+import hr.fer.ika.ikasus.DAO.Vozilo;
 import hr.fer.ika.ikasus.DTO.incoming.NotificationId;
 import hr.fer.ika.ikasus.DTO.incoming.NotificationRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.NotificationResponse;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -83,7 +86,8 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         ObavijestId notifId = new ObavijestId();
-        notifId.setIdobavijest(this.obavijestRepository.getNextIdForRental(notificationRequest.getRentalId()));
+        Integer nextId = this.obavijestRepository.getNextIdForRental(notificationRequest.getRentalId());
+        notifId.setIdobavijest((nextId == null) ? 1 : nextId);
         notifId.setIdnajam(notificationRequest.getRentalId());
 
         Obavijest notification = new Obavijest();
@@ -203,5 +207,53 @@ public class NotificationServiceImpl implements NotificationService {
         this.obavijestRepository.save(notification);
 
         return true;
+    }
+
+    private static final String MESSAGE_FORMAT = "Heads up! Your rental (Rental id: %d) of the vehicle %s will expire" +
+            " in %d days.";
+    private static final String EXPIRED_MESSAGE_FORMAT = "Your rental (Rental id: %d) has expired! Please return the " +
+            "vehicle (%s).";
+
+    @Override
+    public void notifyExpiring() {
+        this.najamRepository.findAll().stream()
+                .filter(
+                        rental -> rental != null && rental.getAktivan() && rental.getVrijemedo() != null &&
+                                rental.getVrijemedo().until(Instant.now(), ChronoUnit.DAYS) <= 5
+                )
+                .filter(rental ->
+                        !this.obavijestRepository.wasNotifiedRecently(
+                                rental.getId(),
+                                Instant.now().minus(3, ChronoUnit.DAYS)
+                        )
+                )
+                .forEach(rental -> {
+                    long daysUntil = rental.getVrijemedo().until(Instant.now(), ChronoUnit.DAYS);
+                    Vozilo v = rental.getIdvozilo();
+
+                    String text;
+
+                    if (daysUntil <= 0) {
+                        text = String.format(
+                                EXPIRED_MESSAGE_FORMAT,
+                                rental.getId(),
+                                v.getNaziv()
+                        );
+                    } else {
+                        text = String.format(
+                                MESSAGE_FORMAT,
+                                rental.getId(),
+                                v.getNaziv(),
+                                daysUntil
+                        );
+                    }
+
+                    NotificationRequest notificationRequest = new NotificationRequest();
+                    notificationRequest.setContent(text);
+                    notificationRequest.setRentalId(rental.getId());
+                    notificationRequest.setTime(new Date());
+
+                    this.createNotification(notificationRequest);
+                });
     }
 }

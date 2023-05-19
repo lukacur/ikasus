@@ -62,6 +62,17 @@ public class NotificationController {
         return ResponseEntity.created(URI.create(req.getServletPath())).body(createdNotificationId);
     }
 
+    @PostMapping("/signal")
+    public ResponseEntity<?> signalExpiringRentals(Authentication auth) {
+        if (!Authorities.hasManagerOrEmployeeAuthority(auth)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        this.notificationService.notifyExpiring();
+
+        return ResponseEntity.ok().build();
+    }
+
     @PatchMapping
     public ResponseEntity<CommonResponse> setNotificationSeen(
             Authentication auth,

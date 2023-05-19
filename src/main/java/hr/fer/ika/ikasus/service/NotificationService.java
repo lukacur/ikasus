@@ -20,4 +20,6 @@ public interface NotificationService {
 
     boolean deleteNotification(Integer notificationId, Integer rentalId);
     boolean markNotificationDeleted(Integer customerId, Integer notificationId, Integer rentalId);
+
+    void notifyExpiring();
 }
