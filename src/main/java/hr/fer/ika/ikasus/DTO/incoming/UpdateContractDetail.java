@@ -13,6 +13,7 @@ public class UpdateContractDetail {
     private Date signedOn;
     private Double price;
     private String signatureBase64Encoded;
+    private Integer rentalRequestId;
 
     public UpdateContractDetail() {
     }
@@ -71,5 +72,13 @@ public class UpdateContractDetail {
 
     public void setSignatureBase64Encoded(String signatureBase64Encoded) {
         this.signatureBase64Encoded = signatureBase64Encoded;
+    }
+
+    public Integer getRentalRequestId() {
+        return rentalRequestId;
+    }
+
+    public void setRentalRequestId(Integer rentalRequestId) {
+        this.rentalRequestId = rentalRequestId;
     }
 }

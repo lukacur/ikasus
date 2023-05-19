@@ -12,6 +12,7 @@ public class ContractDetail {
     private Boolean signed;
     private Date signedOn;
     private double price;
+    private Integer rentalRequestId;
 
     public ContractDetail() {
     }
@@ -62,5 +63,13 @@ public class ContractDetail {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Integer getRentalRequestId() {
+        return rentalRequestId;
+    }
+
+    public void setRentalRequestId(Integer rentalRequestId) {
+        this.rentalRequestId = rentalRequestId;
     }
 }

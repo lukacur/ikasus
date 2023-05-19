@@ -1,10 +1,12 @@
 package hr.fer.ika.ikasus.service.implementation;
 
 import hr.fer.ika.ikasus.DAO.Ugovor;
+import hr.fer.ika.ikasus.DAO.ZahtjevZaNajmom;
 import hr.fer.ika.ikasus.DTO.incoming.UpdateContractDetail;
 import hr.fer.ika.ikasus.DTO.outgoing.ContractDetail;
 import hr.fer.ika.ikasus.DTO.outgoing.ContractMaster;
 import hr.fer.ika.ikasus.repository.UgovorRepository;
+import hr.fer.ika.ikasus.repository.ZahtjevZaNajmomRepository;
 import hr.fer.ika.ikasus.service.ContractService;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,11 @@ import java.util.stream.Collectors;
 @Service
 public class ContractServiceImpl implements ContractService {
     private final UgovorRepository ugovorRepository;
+    private final ZahtjevZaNajmomRepository zahtjevZaNajmomRepository;
 
-    public ContractServiceImpl(UgovorRepository ugovorRepository) {
+    public ContractServiceImpl(UgovorRepository ugovorRepository, ZahtjevZaNajmomRepository zahtjevZaNajmomRepository) {
         this.ugovorRepository = ugovorRepository;
+        this.zahtjevZaNajmomRepository = zahtjevZaNajmomRepository;
     }
 
     @Override
@@ -55,6 +59,10 @@ public class ContractServiceImpl implements ContractService {
         detail.setSigned(contract.getVrijemepotpisa() != null);
         detail.setPrice(contract.getUgovorenacijena().doubleValue());
 
+        if (contract.getIdzahtjev() != null) {
+            detail.setRentalRequestId(contract.getIdzahtjev().getId());
+        }
+
         if (contract.getVrijemepotpisa() != null) {
             detail.setSignedOn(Date.from(contract.getVrijemepotpisa()));
         }
@@ -69,6 +77,18 @@ public class ContractServiceImpl implements ContractService {
         contract.setNaslov(contractDetail.getTitle());
         contract.setSadrzaj(contractDetail.getContent());
         contract.setUgovorenacijena(BigDecimal.valueOf(contractDetail.getPrice()));
+
+        if (contractDetail.getRentalRequestId() != null) {
+            Optional<ZahtjevZaNajmom> rentReqOpt = this.zahtjevZaNajmomRepository.findById(
+                    contractDetail.getRentalRequestId()
+            );
+
+            if (rentReqOpt.isEmpty()) {
+                return null;
+            }
+
+            contract.setIdzahtjev(rentReqOpt.get());
+        }
 
         contract = this.ugovorRepository.save(contract);
 
@@ -109,6 +129,18 @@ public class ContractServiceImpl implements ContractService {
             contract.setVrijemepotpisa(
                     (detail.getSigned() == null || !detail.getSigned()) ? null : detail.getSignedOn().toInstant()
             );
+        }
+
+        if (detail.getRentalRequestId() != null) {
+            Optional<ZahtjevZaNajmom> rentReqOpt = this.zahtjevZaNajmomRepository.findById(
+                    detail.getRentalRequestId()
+            );
+
+            if (rentReqOpt.isEmpty()) {
+                return false;
+            }
+
+            contract.setIdzahtjev(rentReqOpt.get());
         }
 
         this.ugovorRepository.save(contract);
