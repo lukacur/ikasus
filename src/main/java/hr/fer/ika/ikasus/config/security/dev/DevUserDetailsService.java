@@ -26,6 +26,8 @@ public class DevUserDetailsService implements UserDetailsService {
     private final UpraviteljPoslovniceRepository upraviteljPoslovniceRepository;
     private final UnajmiteljRepository unajmiteljRepository;
 
+    private LoginType loginType;
+
     public DevUserDetailsService(
             IznajmljivacRepository iznajmljivacRepository,
             UpraviteljPoslovniceRepository upraviteljPoslovniceRepository,
@@ -36,23 +38,50 @@ public class DevUserDetailsService implements UserDetailsService {
         this.unajmiteljRepository = unajmiteljRepository;
     }
 
+    public void setLoginType(LoginType loginType) {
+        this.loginType = loginType;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (this.loginType == null) {
+            return null;
+        }
+
         DevUserDetails details = null;
         DevUserDetails.DevUserDetailsBuilder builder = DevUserDetails.builder();
 
-        if (username.contains("@")) {
-            Optional<Iznajmljivac> izn = this.iznajmljivacRepository.findByEmail(username);
+        switch (this.loginType) {
+            case MANAGER -> {
+                Optional<UpraviteljPoslovnice> up = this.upraviteljPoslovniceRepository.findByKorisnickoime(username);
 
-            if (izn.isPresent()) {
-                Iznajmljivac iznajmljivac = izn.get();
-                details = builder.withId(iznajmljivac.getId())
-                        .withUsername(iznajmljivac.getEmail())
-                        .withPassword(iznajmljivac.getLozinka())
-                        .withType(SubjectType.EMPLOYEE)
-                        .withAuthorities(List.of(() -> Authorities.EMPLOYEE_AUTHORITY))
-                        .build();
-            } else {
+                if (up.isPresent()) {
+                    UpraviteljPoslovnice upraviteljPoslovnice = up.get();
+
+                    details = builder.withId(upraviteljPoslovnice.getId())
+                            .withUsername(upraviteljPoslovnice.getKorisnickoime())
+                            .withPassword(upraviteljPoslovnice.getLozinka())
+                            .withType(SubjectType.MANAGER)
+                            .withAuthorities(List.of(() -> Authorities.MANAGER_AUTHORITY))
+                            .build();
+                }
+            }
+
+            case CUSTOMER -> {
+                Optional<Iznajmljivac> izn = this.iznajmljivacRepository.findByEmail(username);
+
+                if (izn.isPresent()) {
+                    Iznajmljivac iznajmljivac = izn.get();
+                    details = builder.withId(iznajmljivac.getId())
+                            .withUsername(iznajmljivac.getEmail())
+                            .withPassword(iznajmljivac.getLozinka())
+                            .withType(SubjectType.EMPLOYEE)
+                            .withAuthorities(List.of(() -> Authorities.EMPLOYEE_AUTHORITY))
+                            .build();
+                }
+            }
+
+            case EMPLOYEE -> {
                 Optional<Unajmitelj> unj = this.unajmiteljRepository.findByEmail(username);
 
                 if (unj.isPresent()) {
@@ -64,19 +93,6 @@ public class DevUserDetailsService implements UserDetailsService {
                             .withAuthorities(List.of(() -> Authorities.CUSTOMER_AUTHORITY))
                             .build();
                 }
-            }
-        } else {
-            Optional<UpraviteljPoslovnice> up = this.upraviteljPoslovniceRepository.findByKorisnickoime(username);
-
-            if (up.isPresent()) {
-                UpraviteljPoslovnice upraviteljPoslovnice = up.get();
-
-                details = builder.withId(upraviteljPoslovnice.getId())
-                        .withUsername(upraviteljPoslovnice.getKorisnickoime())
-                        .withPassword(upraviteljPoslovnice.getLozinka())
-                        .withType(SubjectType.MANAGER)
-                        .withAuthorities(List.of(() -> Authorities.MANAGER_AUTHORITY))
-                        .build();
             }
         }
 

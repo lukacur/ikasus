@@ -75,6 +75,7 @@ public class WebSecurityDevConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.stream(this.corsOrigins.split(";")).toList());
         configuration.setAllowedMethods(List.of("OPTIONS", "HEAD", "GET", "POST", "PATCH", "DELETE", "PUT"));
+        configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

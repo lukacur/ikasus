@@ -3,7 +3,9 @@ package hr.fer.ika.ikasus.controller;
 import hr.fer.ika.ikasus.DTO.incoming.AuthRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.AuthResponse;
 import hr.fer.ika.ikasus.authorization.jwt.JWTUtil;
+import hr.fer.ika.ikasus.config.security.dev.DevAuthenticationCredentials;
 import hr.fer.ika.ikasus.config.security.dev.DevUserDetails;
+import hr.fer.ika.ikasus.config.security.dev.LoginType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +36,16 @@ public class AuthorizationController {
         this.jwtUtil = jwtUtil;
     }
 
-    private ResponseEntity<AuthResponse> authenticateUser(AuthRequest req) {
+    private ResponseEntity<AuthResponse> authenticateUser(
+            AuthRequest req,
+            LoginType loginAs
+    ) {
         try {
             Authentication auth = this.authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.getPrincipal(), req.getCredentials())
+                    new UsernamePasswordAuthenticationToken(
+                            req.getPrincipal(),
+                            new DevAuthenticationCredentials(req.getCredentials(), loginAs)
+                    )
             );
 
             if (auth.getPrincipal() instanceof DevUserDetails details) {
@@ -55,16 +63,16 @@ public class AuthorizationController {
 
     @PostMapping("/manager")
     public ResponseEntity<AuthResponse> authenticateManager(@RequestBody AuthRequest req) {
-        return this.authenticateUser(req);
+        return this.authenticateUser(req, LoginType.MANAGER);
     }
 
     @PostMapping("/employee")
     public ResponseEntity<AuthResponse> authenticateEmployee(@RequestBody AuthRequest req) {
-        return this.authenticateUser(req);
+        return this.authenticateUser(req, LoginType.EMPLOYEE);
     }
 
     @PostMapping("/customer")
     public ResponseEntity<AuthResponse> authenticateCustomer(@RequestBody AuthRequest req) {
-        return this.authenticateUser(req);
+        return this.authenticateUser(req, LoginType.CUSTOMER);
     }
 }
