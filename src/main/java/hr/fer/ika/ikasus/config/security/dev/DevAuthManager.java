@@ -39,7 +39,7 @@ public class DevAuthManager implements AuthenticationManager {
             throw new BadCredentialsException("Invalid user credentials");
         }
 
-        if (!this.encoder.matches((String)authentication.getCredentials(), dud.getPassword())) {
+        if (!this.encoder.matches(authCreds.getPassword(), dud.getPassword())) {
             throw new BadCredentialsException("Invalid user credentials");
         }
 

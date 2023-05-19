@@ -68,20 +68,6 @@ public class DevUserDetailsService implements UserDetailsService {
             }
 
             case CUSTOMER -> {
-                Optional<Iznajmljivac> izn = this.iznajmljivacRepository.findByEmail(username);
-
-                if (izn.isPresent()) {
-                    Iznajmljivac iznajmljivac = izn.get();
-                    details = builder.withId(iznajmljivac.getId())
-                            .withUsername(iznajmljivac.getEmail())
-                            .withPassword(iznajmljivac.getLozinka())
-                            .withType(SubjectType.EMPLOYEE)
-                            .withAuthorities(List.of(() -> Authorities.EMPLOYEE_AUTHORITY))
-                            .build();
-                }
-            }
-
-            case EMPLOYEE -> {
                 Optional<Unajmitelj> unj = this.unajmiteljRepository.findByEmail(username);
 
                 if (unj.isPresent()) {
@@ -91,6 +77,20 @@ public class DevUserDetailsService implements UserDetailsService {
                             .withPassword(unajmitelj.getLozinka())
                             .withType(SubjectType.CUSTOMER)
                             .withAuthorities(List.of(() -> Authorities.CUSTOMER_AUTHORITY))
+                            .build();
+                }
+            }
+
+            case EMPLOYEE -> {
+                Optional<Iznajmljivac> izn = this.iznajmljivacRepository.findByEmail(username);
+
+                if (izn.isPresent()) {
+                    Iznajmljivac iznajmljivac = izn.get();
+                    details = builder.withId(iznajmljivac.getId())
+                            .withUsername(iznajmljivac.getEmail())
+                            .withPassword(iznajmljivac.getLozinka())
+                            .withType(SubjectType.EMPLOYEE)
+                            .withAuthorities(List.of(() -> Authorities.EMPLOYEE_AUTHORITY))
                             .build();
                 }
             }
