@@ -174,6 +174,18 @@ public class RentalRequestServiceImpl implements RentalRequestService {
                 throw new IllegalStateException("Rollback: vehicle couldn't be bound");
             }
 
+            Vozilo vehicle = vehOpt.get();
+
+            if (
+                    !this.voziloRepository.isAvailable(
+                            vehicle.getId(),
+                            vehicleRentalInfo.getRentFrom().toInstant(),
+                            vehicleRentalInfo.getRentTo().toInstant()
+                    )
+            ) {
+                throw new IllegalStateException("Rollback: vehicle isn't available");
+            }
+
             p.setIdvozilo(vehOpt.get());
             p.setPotraznjaod(vehicleRentalInfo.getRentFrom().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             p.setPotraznjado(vehicleRentalInfo.getRentTo().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());

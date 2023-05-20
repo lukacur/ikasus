@@ -22,4 +22,25 @@ public interface VoziloRepository extends JpaRepository<Vozilo, Integer> {
         """
     )
     List<Vozilo> getAvailable(@Param("timefrom")Instant timeFrom, @Param("timeto") Instant timeTo);
+
+    @Query(
+        """
+        SELECT EXISTS(
+            SELECT v
+            FROM Vozilo v
+            JOIN v.najams n
+            WHERE v.id = :vid AND
+                    n.vrijemeod NOT BETWEEN :timefrom AND :timeto AND
+                    n.vrijemedo NOT BETWEEN :timefrom AND :timeto AND
+                    n.vrijemedo IS NOT NULL AND
+                    :timefrom <= :timeto AND
+                    (:timeto <= n.vrijemeod OR :timefrom >= n.vrijemedo)
+        )
+        """
+    )
+    boolean isAvailable(
+            @Param("vid") Integer vehicleId,
+            @Param("timefrom")Instant timeFrom,
+            @Param("timeto") Instant timeTo
+    );
 }
