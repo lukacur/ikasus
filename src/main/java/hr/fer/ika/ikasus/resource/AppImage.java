@@ -23,9 +23,36 @@ public class AppImage implements Closeable {
     public static final String SIGNATURE_IMAGE_ROOT =
             STATIC_CONTENT_PREFIX + "/static-content/images/private/signatures/";
 
+    private static final String[] resourceInit = { VEHICLE_IMAGE_ROOT, SIGNATURE_IMAGE_ROOT };
+
     private final String imagePath;
     private String contentType;
     private BufferedImage imageData;
+
+    static {
+        ClassLoader cl = AppImage.class.getClassLoader();
+
+        for (String resource : resourceInit) {
+            URL url = cl.getResource(resource);
+
+            if (url == null) {
+                url = cl.getResource("./");
+
+                if (url == null) {
+                    throw new RuntimeException("Can't load classpath root");
+                }
+
+                try {
+                    Path rootPath = Path.of(url.toURI());
+                    Path resPath = rootPath.resolve(resource);
+                    Files.createDirectories(resPath);
+                } catch (URISyntaxException | IOException ex) {
+                    ex.printStackTrace();
+                    System.err.println("Unable to create resource folder " + resource);
+                }
+            }
+        }
+    }
 
     private AppImage(String imagePath) {
         this.imagePath = Objects.requireNonNull(imagePath);
