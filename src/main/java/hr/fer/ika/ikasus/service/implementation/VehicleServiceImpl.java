@@ -236,6 +236,11 @@ public class VehicleServiceImpl implements VehicleService {
                             RentalDetail rentalDetail = new RentalDetail();
                             rentalDetail.setId(n.getId());
                             rentalDetail.setActive(n.getAktivan());
+                            rentalDetail.setKmDriven(n.getPrijedeno());
+
+                            if (n.getIdugovor() != null) {
+                                rentalDetail.setContractId(n.getIdugovor().getId());
+                            }
 
                             if (n.getVrijemeod() != null) {
                                 rentalDetail.setTimeFrom(Date.from(n.getVrijemeod()));
