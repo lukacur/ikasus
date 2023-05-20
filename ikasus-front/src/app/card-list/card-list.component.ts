@@ -7,7 +7,7 @@ import { Vehicle } from '../vehicles/vehicle.models';
   styleUrls: ['./card-list.component.scss']
 })
 export class CardListComponent implements OnInit {
-  @Output() clickEmitter = new EventEmitter<void>();
+  @Output() clickEmitter = new EventEmitter<number>();
   @Input() cars: Vehicle[] = [];
 
   constructor() { }
@@ -15,8 +15,8 @@ export class CardListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  emitCard() {
-    this.clickEmitter.emit()
+  emitCard(id: number) {
+    this.clickEmitter.emit(id)
   }
 
 }

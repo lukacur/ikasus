@@ -7,5 +7,8 @@ export const Routes = {
   vehicles: "vehicles",
   types: "vehicle-types",
   locations: "locations",
-  rentals: "rentals"
+  rentals: "rentals",
+  contracts: "contracts",
+  availableVehicles: "vehicles/available",
+  rentalRequests: "rental-requests",
 }

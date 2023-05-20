@@ -22,6 +22,8 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   imgIsFile: boolean = true;
   file: string | undefined;
 
+  create: boolean = false;
+
   constructor(private serv: VehiclesService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
@@ -30,9 +32,9 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      if (this.subs) {
-        this.subs.unsubscribe()
-      }
+    if (this.subs) {
+      this.subs.unsubscribe()
+    }
   }
 
   getData() {
@@ -75,14 +77,26 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   }
 
   updateRental() {
-    if (this.rentalForm && this.rentalForm.valid) {
-      const id = this.rentalForm.get("id")!.value;
-      this.rentalForm.removeControl("id");
+    if (this.rentalForm && !this.rentalForm.valid) return;
+    
+    if (this.rentalForm && this.rentalForm.value) {
 
-      this.serv.updateRental(this.rentalForm.value, id).subscribe(_ => {
-        this.getData();
-        this.closeModal();
-      })
+      if (this.create) {
+        this.serv.postRental(this.rentalForm.value).subscribe(_ => {
+          this.getData();
+          this.closeModal();
+        })
+      }
+
+      else {
+        const id = this.rentalForm.get("id")!.value;
+        this.rentalForm.removeControl("id");
+
+        this.serv.updateRental(this.rentalForm.value, id).subscribe(_ => {
+          this.getData();
+          this.closeModal();
+        })
+      }
     }
   }
 
@@ -94,6 +108,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
 
   closeModal() {
     this.modalActive = false;
+    this.create = false;
     this.rentalForm = undefined;
   }
 
@@ -113,7 +128,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     })
   }
 
-  async patchVehicle() {
+  patchVehicle() {
     if (this.file) {
       this.vehicleForm.addControl("imageBase64Encoded", new FormControl(this.file));
       this.vehicleForm.setControl("imageUrl", null);
@@ -144,5 +159,20 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     this.serv.deleteVehicle(this.vehicleForm.get("id")!.value).subscribe(_ => {
       this.router.navigate(["../"], { relativeTo: this.route })
     })
+  }
+
+  add() {
+    this.create = true;
+
+    this.rentalForm = new FormGroup({
+      "vehicleId": new FormControl(this.vehicleForm.get("id")?.value),
+      "timeFrom": new FormControl(null, Validators.required),
+      "timeTo": new FormControl(null, Validators.required),
+      "kmDriven": new FormControl(),
+      "active": new FormControl(),
+      "contractId": new FormControl(1, Validators.required)
+    });
+
+    this.modalActive = true;
   }
 }

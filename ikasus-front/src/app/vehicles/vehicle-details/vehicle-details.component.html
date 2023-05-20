@@ -79,11 +79,12 @@
       </tr>
     </tbody>
   </table>
+  <button style="margin-top: 1rem;" (click)="add()">Add</button>
 </div>
 
-<app-modal [isActive]="modalActive" actionButtonTitle="Save" (close)="closeModal()"
+<app-modal [isActive]="modalActive" actionButtonTitle="{{ create ? 'Add' : 'Edit' }}" (close)="closeModal()"
 (action)="updateRental()">
-  <h1>Edit rental</h1>
+  <h1>{{ create ? "Add" : "Edit" }} rental</h1>
   <form *ngIf="rentalForm" [formGroup]="rentalForm">
     <div class="input-group" style="text-align: left; padding: 1rem 0;">
       <div>

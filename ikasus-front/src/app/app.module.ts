@@ -16,6 +16,9 @@ import { RequestsAndContractsComponent } from './requests-and-contracts/requests
 import { AuthInterceptor } from './auth.interceptor';
 import { VehiclesComponent } from './vehicles/vehicles.component';
 import { VehicleDetailsComponent } from './vehicles/vehicle-details/vehicle-details.component';
+import { VehicleTypesComponent } from './vehicle-types/vehicle-types.component';
+import { DatepickerComponent } from './datepicker/datepicker.component';
+import { ContractsComponent } from './contracts/contracts.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { VehicleDetailsComponent } from './vehicles/vehicle-details/vehicle-deta
     LoginComponent,
     RequestsAndContractsComponent,
     VehicleDetailsComponent,
-    VehiclesComponent
+    VehiclesComponent,
+    VehicleTypesComponent,
+    DatepickerComponent,
+    ContractsComponent
   ],
   imports: [
     BrowserModule,
