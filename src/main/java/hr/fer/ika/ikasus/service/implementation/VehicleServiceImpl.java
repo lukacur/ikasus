@@ -123,6 +123,10 @@ public class VehicleServiceImpl implements VehicleService {
             v.setKilometraza(createVehicleMaster.getKmDriven());
         }
 
+        if (createVehicleMaster.getPricePerDay() != null) {
+            v.setDnevnacijena(BigDecimal.valueOf(createVehicleMaster.getPricePerDay()));
+        }
+
         if (createVehicleMaster.getName() != null) {
             v.setNaziv(createVehicleMaster.getName());
         }

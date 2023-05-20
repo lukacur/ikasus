@@ -39,13 +39,6 @@ public class VehicleController {
         return ResponseEntity.ok(this.vehicleService.getVehicles());
     }
 
-    @GetMapping("/available")
-    public ResponseEntity<List<VehicleMaster>> getAvailableVehicles(
-            @RequestBody AvailableVehicleFilter availableVehicleFilter
-    ) {
-        return ResponseEntity.ok(this.vehicleService.getAvailableVehicles(availableVehicleFilter));
-    }
-
     @GetMapping("/{id}/ratings")
     public ResponseEntity<List<RatingInfo>> getVehicleRatings(@PathVariable("id") Integer vehicleId) {
         return ResponseEntity.ok(this.ratingService.getRatingsForVehicle(vehicleId));
@@ -64,6 +57,13 @@ public class VehicleController {
         }
 
         return ResponseEntity.ok(mdInfo);
+    }
+
+    @PostMapping("/available")
+    public ResponseEntity<List<VehicleMaster>> getAvailableVehicles(
+            @RequestBody AvailableVehicleFilter availableVehicleFilter
+    ) {
+        return ResponseEntity.ok(this.vehicleService.getAvailableVehicles(availableVehicleFilter));
     }
 
     @PatchMapping("/{id}")
