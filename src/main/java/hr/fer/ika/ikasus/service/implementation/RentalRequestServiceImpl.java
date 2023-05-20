@@ -199,6 +199,27 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     }
 
     @Override
+    public boolean denyRentalRequest(Integer rentalRequestId) {
+        if (rentalRequestId == null) {
+            return false;
+        }
+
+        Optional<ZahtjevZaNajmom> rentReqOpt = this.zahtjevZaNajmomRepository.findById(rentalRequestId);
+
+        if (rentReqOpt.isEmpty()) {
+            return false;
+        }
+
+        ZahtjevZaNajmom rentalRequest = rentReqOpt.get();
+
+        rentalRequest.setStatus(RentalRequestStatus.REQUEST_REJECTED);
+
+        this.zahtjevZaNajmomRepository.save(rentalRequest);
+
+        return true;
+    }
+
+    @Override
     public boolean cancelRentalRequest(Integer rentalRequestId) {
         if (rentalRequestId == null) {
             return false;

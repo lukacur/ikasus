@@ -17,6 +17,8 @@ public interface RentalRequestService {
 
     Integer createRentalRequest(Integer customerId, CreateRentalRequestInfo createRentalRequestInfo);
 
+    boolean denyRentalRequest(Integer rentalRequestId);
+
     boolean cancelRentalRequest(Integer rentalRequestId);
     boolean cancelRentalRequest(Integer customerId, Integer rentalRequestId);
 

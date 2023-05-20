@@ -1,7 +1,7 @@
 package hr.fer.ika.ikasus.controller;
 
-import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.incoming.CreateRentalRequestInfo;
+import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
 import hr.fer.ika.ikasus.DTO.outgoing.RentalRequestMaster;
 import hr.fer.ika.ikasus.config.security.Authorities;
@@ -72,6 +72,21 @@ public class RentalRequestController {
         }
 
         return ResponseEntity.ok(requestMaster);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> denyRentalRequest(Authentication auth, @PathVariable("id") Integer rentalRequestId) {
+        if (!Authorities.hasManagerOrEmployeeAuthority(auth)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        boolean denied = this.rentalRequestService.denyRentalRequest(rentalRequestId);
+
+        if (!denied) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping
