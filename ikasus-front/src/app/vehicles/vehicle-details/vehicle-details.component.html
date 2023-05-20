@@ -12,15 +12,25 @@
       </div>
       <div>
         <label for="">KM driven</label>
-        <input type="text" formControlName="kmDriven">
+        <input type="number" formControlName="kmDriven">
       </div>
       <div>
         <label for="">Price per day</label>
         <input type="text" formControlName="pricePerDay">
       </div>
-      <div>
+      <div *ngIf="!imgIsFile">
         <label for="">Image</label>
         <input type="text" formControlName="imageUrl">
+      </div>
+      <div *ngIf="imgIsFile">
+        <label for="">Image</label>
+        <input type="file" accept="image/png, image/gif, image/jpeg"
+        (change)="onFileChange($event)">
+      </div>
+      <div class="radio">
+        <button (click)="imgIsFile = !imgIsFile">
+          {{ imgIsFile ? "Image from URL" : "Image from file"}}
+        </button>
       </div>
       <div>
         <label for="">Type</label>
@@ -44,7 +54,6 @@
       <button class="delete" type="button" (click)="deleteVehicle()">Delete</button>
     </div>
   </form>
-
   <table cellspacing="0">
     <thead>
       <th>From</th>
@@ -56,15 +65,15 @@
     </thead>
     <tbody>
       <tr *ngFor="let rental of rentals">
-        <td>{{ rental.timeFrom ? rental.timeFrom : "-" }}</td>
-        <td>{{ rental.timeTo ? rental.timeTo : "-" }}</td>
-        <td>{{ rental.kmDriven ? rental.kmDriven : "-" }}</td>
-        <td>{{ rental.active ? rental.active : "-" }}</td>
-        <td>{{ rental.contractId ? rental.contractId : "-" }}</td>
+        <td>{{ rental.timeFrom != null ? timestampToDate(rental.timeFrom) : "-" }}</td>
+        <td>{{ rental.timeTo != null ? timestampToDate(rental.timeTo) : "-" }}</td>
+        <td>{{ rental.kmDriven != null ? rental.kmDriven : "-" }}</td>
+        <td>{{ rental.active != null ? rental.active : "-" }}</td>
+        <td>{{ rental.contractId != null ? rental.contractId : "-" }}</td>
         <td>
           <div class="btns">
             <button type="button" (click)="openModal(rental)">Edit</button>
-            <button class="delete" type="button">Delete</button>
+            <button class="delete" type="button" (click)="deleteRental(rental.id)">Delete</button>
           </div>
         </td>
       </tr>
@@ -79,15 +88,15 @@
     <div class="input-group" style="text-align: left; padding: 1rem 0;">
       <div>
         <label for="">From</label>
-        <input type="datetime-local" formControlName="timeFrom">
+        <input type="date" formControlName="timeFrom">
       </div>
       <div>
         <label for="">To</label>
-        <input type="datetime-local" formControlName="timeTo">
+        <input type="date" formControlName="timeTo">
       </div>
       <div>
         <label for="">KM driven</label>
-        <input type="text" formControlName="kmDriven">
+        <input type="number" formControlName="kmDriven">
       </div>
       <div>
         <label for="">Active</label>
@@ -96,10 +105,14 @@
           <option value="{{false}}">FALSE</option>
         </select>
       </div>
-      <!-- <div>
+      <div>
         <label for="">Contract</label>
-        <input type="text" formControlName="">
-      </div> -->
+        <select formControlName="contractId">
+          <option *ngFor="let con of contracts" value="{{con.id}}">
+            {{ con.title }}
+          </option>
+        </select>
+      </div>
     </div>
   </form>
 </app-modal>

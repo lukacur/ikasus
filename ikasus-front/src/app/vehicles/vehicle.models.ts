@@ -10,6 +10,11 @@ export interface Vehicle {
   locationId: number;
 }
 
+export interface Contract {
+  id: number;
+  title: string;
+}
+
 export interface VehicleDetails {
   id: number;
   registration: string;

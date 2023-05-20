@@ -32,6 +32,13 @@ div.input-group {
     }
   }
 
+  div.radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1.25rem;
+  }
+
 }
 
 form.form {

@@ -1,53 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { VehiclesService } from '../vehicles.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VehicleDetails, VehicleType, Location, Rental } from '../vehicle.models';
+import { VehicleDetails, VehicleType, Location, Rental, Contract } from '../vehicle.models';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-vehicle-details',
   templateUrl: './vehicle-details.component.html',
   styleUrls: ['./vehicle-details.component.scss']
 })
-export class VehicleDetailsComponent implements OnInit {
+export class VehicleDetailsComponent implements OnInit, OnDestroy {
   types: VehicleType[] = [];
   locations: Location[] = [];
   rentals: Rental[] = [];
+  contracts: Contract[] = [];
   vehicleForm!: FormGroup;
   rentalForm: FormGroup | undefined;
   modalActive: boolean = false;
+  subs!: Subscription;
+  imgIsFile: boolean = true;
+  file: string | undefined;
 
   constructor(private serv: VehiclesService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    this.serv.getLocations().subscribe(locs => {
-      this.locations = locs;
-      this.serv.getTypes().subscribe(types => {
-        this.types = types;
-        this.serv.getVehicle(this.route.snapshot.params["id"]).subscribe(vh => {
-          this.rentals = vh.rentals;
-          this.initForm(vh);
-        })
-      })
-    })
+    this.subs = new Subscription();
+    this.getData()
+  }
+
+  ngOnDestroy(): void {
+      if (this.subs) {
+        this.subs.unsubscribe()
+      }
+  }
+
+  getData() {
+    this.subs.add(this.serv.getAllContracts().subscribe(cons => {
+      this.contracts = cons;
+
+      this.subs.add(this.serv.getLocations().subscribe(locs => {
+        this.locations = locs;
+
+        this.subs?.add(
+          this.serv.getTypes().subscribe(types => {
+            this.types = types;
+
+            this.subs?.add(
+              this.serv.getVehicle(this.route.snapshot.params["id"]).subscribe(vh => {
+                this.rentals = vh.rentals;
+                this.initForm(vh);
+              }))
+          }))
+      }))
+    }))
   }
 
   openModal(rental: Rental) {
     this.rentalForm = new FormGroup({
       "id": new FormControl(rental.id),
-      "timeFrom": new FormControl(this.timestampToDatetimeInputString(rental.timeFrom)),
-      "timeTo": new FormControl(this.timestampToDatetimeInputString(rental.timeTo)),
+      "timeFrom": new FormControl(this.timestampToDate(rental.timeFrom)),
+      "timeTo": new FormControl(this.timestampToDate(rental.timeTo)),
       "kmDriven": new FormControl(rental.kmDriven),
-      "active": new FormControl(rental.active)
+      "active": new FormControl(rental.active),
+      "contractId": new FormControl(rental.contractId),
     });
-    // "contractId": new FormControl(rental.contractId, Validators.required),
     this.modalActive = true;
   }
 
-  timestampToDatetimeInputString(timestamp: string) {
+  timestampToDate(timestamp: string) {
     if (!timestamp) return null;
-    const date = new Date((timestamp));
-    return date.toISOString().slice(0, 19);
+    const date = new Date(timestamp);
+    return date.toISOString().slice(0, 10);
   }
 
   updateRental() {
@@ -56,9 +80,16 @@ export class VehicleDetailsComponent implements OnInit {
       this.rentalForm.removeControl("id");
 
       this.serv.updateRental(this.rentalForm.value, id).subscribe(_ => {
+        this.getData();
         this.closeModal();
       })
     }
+  }
+
+  deleteRental(id: number) {
+    this.serv.deleteRental(id).subscribe(_ => {
+      this.getData();
+    });
   }
 
   closeModal() {
@@ -67,24 +98,46 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   initForm(vehicle: VehicleDetails) {
+    this.imgIsFile = vehicle.imagePath != null && vehicle.imagePath.startsWith("base64");
+
     this.vehicleForm = new FormGroup({
       "id": new FormControl(vehicle.id),
-      "registration": new FormControl(vehicle.registration, Validators.required),
-      "name": new FormControl(vehicle.name, Validators.required),
-      "manufacturer": new FormControl(vehicle.manufacturer, Validators.required),
-      "kmDriven": new FormControl(vehicle.kmDriven, Validators.required),
-      "pricePerDay": new FormControl(vehicle.pricePerDay, Validators.required),
-      "imageUrl": new FormControl(vehicle.imagePath, Validators.required),
-      "vehicleTypeId": new FormControl(vehicle.vehicleTypeId, Validators.required),
-      "locationId": new FormControl(vehicle.locationId, Validators.required)
+      "registration": new FormControl(vehicle.registration),
+      "name": new FormControl(vehicle.name),
+      "manufacturer": new FormControl(vehicle.manufacturer),
+      "kmDriven": new FormControl(vehicle.kmDriven),
+      "pricePerDay": new FormControl(vehicle.pricePerDay),
+      "imageUrl": new FormControl(vehicle.imagePath),
+      "vehicleTypeId": new FormControl(vehicle.vehicleTypeId),
+      "locationId": new FormControl(vehicle.locationId)
     })
   }
 
-  patchVehicle() {
-    console.log(this.vehicleForm.value)
-    this.serv.updateVehicle(this.vehicleForm.value as VehicleDetails).subscribe(res => {
-      window.location.reload()
+  async patchVehicle() {
+    if (this.file) {
+      this.vehicleForm.addControl("imageBase64Encoded", new FormControl(this.file));
+      this.vehicleForm.setControl("imageUrl", null);
+    }
+
+    this.serv.updateVehicle(this.vehicleForm.value as VehicleDetails).subscribe(_ => {
+      this.getData()
     })
+  }
+
+  async onFileChange(event: any) {
+    if (event.target!.files.length > 0) {
+      const file = event.target.files[0];
+      this.file = (await this.blobToBase64(file)) as string;
+      this.file = this.file.slice(this.file.indexOf(",") + 1)
+    }
+  }
+
+  blobToBase64(blob: Blob) {
+    return new Promise((resolve, _) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
   }
 
   deleteVehicle() {
