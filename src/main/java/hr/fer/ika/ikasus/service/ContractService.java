@@ -21,6 +21,7 @@ public interface ContractService {
     boolean updateDetailsFor(Integer contractId, UpdateContractDetail detail);
     boolean deleteContract(Integer contractId);
 
+    boolean completeContract(Integer contractId);
     boolean signContract(Integer customerId, SignContractRequest signContractRequest);
 
     boolean canViewSignature(Integer customerId, String pathToSignature);

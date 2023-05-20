@@ -93,26 +93,6 @@ public class ContractController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/sign")
-    public ResponseEntity<?> signContract(
-            Authentication auth,
-            @RequestBody SignContractRequest signContractRequest
-    ) {
-        if (!Authorities.hasCustomerAuthority(auth)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        Integer customerId = Authorities.extractSubjectId(auth);
-
-        boolean signed = this.contractService.signContract(customerId, signContractRequest);
-
-        if (!signed) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping
     public ResponseEntity<?> createContract(
             Authentication auth,
@@ -132,6 +112,41 @@ public class ContractController {
         String createdURL = req.getServletPath() + "/" + id;
 
         return ResponseEntity.created(URI.create(createdURL)).build();
+    }
+
+    @PostMapping("/complete/{id}")
+    public ResponseEntity<?> completeContract(Authentication auth, @PathVariable("id") Integer contractId) {
+        if (!Authorities.hasManagerOrEmployeeAuthority(auth)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        boolean completed = this.contractService.completeContract(contractId);
+
+        if (!completed) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/sign")
+    public ResponseEntity<?> signContract(
+            Authentication auth,
+            @RequestBody SignContractRequest signContractRequest
+    ) {
+        if (!Authorities.hasCustomerAuthority(auth)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Integer customerId = Authorities.extractSubjectId(auth);
+
+        boolean signed = this.contractService.signContract(customerId, signContractRequest);
+
+        if (!signed) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping

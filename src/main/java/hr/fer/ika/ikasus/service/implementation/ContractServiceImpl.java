@@ -255,6 +255,32 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    public boolean completeContract(Integer contractId) {
+        if (contractId == null) {
+            return false;
+        }
+
+        Optional<Ugovor> contOpt = this.ugovorRepository.findById(contractId);
+
+        if (contOpt.isEmpty()) {
+            return false;
+        }
+
+        for (Najam rental : contOpt.get().getNajams()) {
+            CreateRentalDetail detail = new CreateRentalDetail();
+            detail.setTimeFrom(Date.from(rental.getVrijemeod()));
+            if (rental.getVrijemedo() == null) {
+                detail.setTimeTo(new Date());
+            }
+            detail.setActive(false);
+
+            this.rentalService.updateRental(rental.getId(), detail);
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean signContract(Integer customerId, SignContractRequest signContractRequest) {
         if (customerId == null || signContractRequest == null ||
                 signContractRequest.getContractId() == null || signContractRequest.getSignatureBase64Encoded() == null
