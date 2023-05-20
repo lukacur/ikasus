@@ -86,7 +86,7 @@ public class RentalServiceImpl implements RentalService {
     }
 
     private static boolean validate(CreateRentalDetail detail, List<Najam> vehicleRentals, boolean updateCheck) {
-        if (detail.getTimeFrom() == null ||
+        if (detail.getTimeFrom() == null || detail.getTimeTo() == null ||
                 !updateCheck && (detail.getVehicleId() == null || detail.getContractId() == null)
         ) {
             return false;
@@ -95,7 +95,7 @@ public class RentalServiceImpl implements RentalService {
         Date detailFrom = detail.getTimeFrom();
         Date detailTo = detail.getTimeTo();
 
-        if (detailTo != null && detailTo.before(detailFrom)) {
+        if (detailTo.before(detailFrom)) {
             return false;
         }
 
@@ -105,18 +105,10 @@ public class RentalServiceImpl implements RentalService {
                     Date rTo;
 
                     if (r.getVrijemedo() == null) {
-                        if (detailTo == null) {
-                            return true;
-                        }
-
                         return detailTo.after(rFrom);
                     }
 
                     rTo = Date.from(r.getVrijemedo());
-
-                    if (detailTo == null) {
-                        return detailFrom.before(rTo);
-                    }
 
                     return !(
                             detailTo.before(rFrom) || detailTo.equals(rFrom) ||
@@ -187,6 +179,8 @@ public class RentalServiceImpl implements RentalService {
 
             rental.setIdugovor(contractOpt.get());
         }
+
+        this.najamRepository.save(rental);
 
         return true;
     }
