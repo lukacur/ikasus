@@ -1,6 +1,7 @@
 package hr.fer.ika.ikasus.service.implementation;
 
 import hr.fer.ika.ikasus.DAO.*;
+import hr.fer.ika.ikasus.DAO.util.RentalRequestStatus;
 import hr.fer.ika.ikasus.DTO.incoming.ContractIssueRequest;
 import hr.fer.ika.ikasus.repository.*;
 import hr.fer.ika.ikasus.service.ContractIssueService;
@@ -105,6 +106,12 @@ public class ContractIssueServiceImpl implements ContractIssueService {
         contractIssue.setIdugovor(contract);
 
         contractIssue = this.izdavanjeRepository.save(contractIssue);
+
+        if (contract.getIdzahtjev() != null) {
+            ZahtjevZaNajmom z = contract.getIdzahtjev();
+            z.setStatus(RentalRequestStatus.REQUEST_CONFIRMED);
+            this.zahtjevZaNajmomRepository.save(z);
+        }
 
         return contractIssue.getId();
     }
