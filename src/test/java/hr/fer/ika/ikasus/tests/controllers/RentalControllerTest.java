@@ -6,6 +6,9 @@ import hr.fer.ika.ikasus.DTO.incoming.DeleteRequest;
 import hr.fer.ika.ikasus.DTO.outgoing.CommonResponse;
 import hr.fer.ika.ikasus.DTO.outgoing.RentalDetail;
 import hr.fer.ika.ikasus.service.RentalService;
+import static hr.fer.ika.ikasus.tests.util.InstantUtil.InstantRange;
+
+import hr.fer.ika.ikasus.tests.util.InstantUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,40 +48,6 @@ public class RentalControllerTest {
 
     @MockBean
     private RentalService rentalService;
-
-    private static List<Instant> pickInstant(Instant now, int i) {
-        Instant from;
-        Instant to;
-        List<Instant> instants;
-
-        switch (i % 4) {
-            case 0 -> {
-                from = now.minus(80, ChronoUnit.DAYS);
-                to = now.minus(50, ChronoUnit.DAYS);
-                instants = List.of(from, to);
-            }
-
-            case 1 -> {
-                from = now.minus(50, ChronoUnit.DAYS);
-                to = now.minus(40, ChronoUnit.DAYS);
-                instants = List.of(from, to);
-            }
-
-            case 2 -> {
-                from = now.minus(30, ChronoUnit.DAYS);
-                to = now.minus(20, ChronoUnit.DAYS);
-                instants = List.of(from, to);
-            }
-
-            default -> {
-                from = now.plus(20, ChronoUnit.DAYS);
-                to = now.plus(40, ChronoUnit.DAYS);
-                instants = List.of(from, to);
-            }
-        }
-
-        return instants;
-    }
 
     private void setupMocks() {
         doReturn(rentalDetails).when(this.rentalService).getAllRentalDetails();
@@ -126,9 +95,9 @@ public class RentalControllerTest {
         rd1.setKmDriven(125000);
         rd1.setActive(false);
 
-        List<Instant> instants = pickInstant(NOW, 3);
-        rd1.setTimeFrom(Date.from(instants.get(0)));
-        rd1.setTimeTo(Date.from(instants.get(1)));
+        InstantRange instants = InstantUtil.pickInstant(NOW, 3);
+        rd1.setTimeFrom(Date.from(instants.from()));
+        rd1.setTimeTo(Date.from(instants.to()));
 
         this.rentalDetails.add(rd1);
 
@@ -139,9 +108,9 @@ public class RentalControllerTest {
         rd2.setKmDriven(12000);
         rd2.setActive(true);
 
-        instants = pickInstant(NOW, 2);
-        rd2.setTimeFrom(Date.from(instants.get(0)));
-        rd2.setTimeTo(Date.from(instants.get(1)));
+        instants = InstantUtil.pickInstant(NOW, 2);
+        rd2.setTimeFrom(Date.from(instants.from()));
+        rd2.setTimeTo(Date.from(instants.to()));
 
         this.rentalDetails.add(rd2);
     }
@@ -212,9 +181,9 @@ public class RentalControllerTest {
         crd.setKmDriven(5000);
         crd.setActive(false);
 
-        List<Instant> instants = pickInstant(NOW, 1);
-        crd.setTimeFrom(Date.from(instants.get(0)));
-        crd.setTimeTo(Date.from(instants.get(1)));
+        InstantRange instants = InstantUtil.pickInstant(NOW, 1);
+        crd.setTimeFrom(Date.from(instants.from()));
+        crd.setTimeTo(Date.from(instants.to()));
 
         MvcResult res = this.mockMvc.perform(
                 post(RENTAL_REQUEST_ROOT_PATH)
