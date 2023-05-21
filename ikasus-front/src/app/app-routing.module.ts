@@ -10,17 +10,21 @@ import { DatepickerComponent } from './datepicker/datepicker.component';
 import { VehicleTypesComponent } from './vehicle-types/vehicle-types.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { CustomerContractsComponent } from './customer-contracts/customer-contracts.component';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { AuthGuardCustomerGuard } from './auth-guard-customer.guard';
+import { AuthGuardGuard } from './auth-guard.guard';
 
 const routes: Routes = [
   { path: "", component: DatepickerComponent},
-  { path: "rent", component: HomepageComponent},
+  { path: "rent", component: HomepageComponent, canActivate: [AuthGuardCustomerGuard] },
   { path: "login", component: LoginComponent },
-  { path: "types", component: VehicleTypesComponent },
-  { path: "contracts", component: ContractsComponent },
-  { path: "my-contracts", component: CustomerContractsComponent },
-  { path: "vehicles", component: VehiclesComponent },
-  { path: "vehicles/:id", component: VehicleDetailsComponent },
-  { path: "contracts-and-requests", component: RequestsAndContractsComponent },
+  { path: "types", component: VehicleTypesComponent , canActivate: [AuthGuardGuard]},
+  { path: "contracts", component: ContractsComponent , canActivate: [AuthGuardGuard]},
+  { path: "my-contracts", component: CustomerContractsComponent, canActivate: [AuthGuardCustomerGuard] },
+  { path: "notifications", component: NotificationsComponent , canActivate: [AuthGuardGuard]},
+  { path: "vehicles", component: VehiclesComponent , canActivate: [AuthGuardGuard]},
+  { path: "vehicles/:id", component: VehicleDetailsComponent , canActivate: [AuthGuardGuard]},
+  { path: "contracts-and-requests", component: RequestsAndContractsComponent , canActivate: [AuthGuardGuard]},
   { path: "profile", loadChildren: () => import(`./profile/profile.module`).then(m => m.ProfileModule) },
 ];
 

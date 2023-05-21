@@ -20,6 +20,7 @@ import { VehicleTypesComponent } from './vehicle-types/vehicle-types.component';
 import { DatepickerComponent } from './datepicker/datepicker.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { CustomerContractsComponent } from './customer-contracts/customer-contracts.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { CustomerContractsComponent } from './customer-contracts/customer-contra
     VehicleTypesComponent,
     DatepickerComponent,
     ContractsComponent,
-    CustomerContractsComponent
+    CustomerContractsComponent,
+    NotificationsComponent
   ],
   imports: [
     BrowserModule,

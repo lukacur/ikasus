@@ -1,0 +1,74 @@
+@import "../../assets/style_guide.scss";
+
+.container {
+  display: flex;
+  padding: 3rem 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+div.flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 7px;
+  width: 40%;
+  background-color: $charcoal;
+  color: white;
+  padding: 1rem 2rem;
+
+  p {
+    inline-size: 80%;
+    overflow-wrap: break-word;
+  }
+
+  button {
+    background: $bittersweet;
+    display: flex;
+    align-items: center;
+  }
+}
+
+small {
+  margin-bottom: 5px;
+  color: $mint;
+}
+
+div.fixed {
+  position: fixed;
+  bottom: 30px;
+  right: 40px;
+  width: 160px;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+label {
+  display: block;
+
+}
+
+input, select {
+  border-radius: 7px;
+  margin-bottom: 1rem;
+  width: 350px;
+}
+
+textarea {
+  resize: none;
+  border-radius: 7px;
+}
+
+div.input-group {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+
+
+  div.inp {
+    margin-bottom: 1rem;
+  }
+}

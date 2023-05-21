@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, subscribeOn } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { Notification, NotificationService } from 'src/app/notification.service';
 
 @Component({
   selector: 'app-header',
@@ -14,16 +15,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public collapsed: boolean = true;
   public role: number | undefined;
 
+  public notification: boolean = false;
+  public notificationArray: Notification[] = []
+
   public user: { token: string } | undefined;
   private userSubscription: Subscription | undefined;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private notifServ: NotificationService) { }
 
   ngOnInit(): void {
     this.userSubscription = this.authService.user.subscribe(user => {
       this.isAuthenticated = !!user;
       this.user = user;
       this.role = this.authService.decodeToken();
+
+      if(this.role && this.role == 0) {
+        this.notifServ.getAllNotifications().subscribe(nts => {
+          this.notificationArray = nts;
+        })
+      }
     });
   }
 

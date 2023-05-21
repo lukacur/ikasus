@@ -13,5 +13,7 @@ export const Routes = {
   availableVehicles: "vehicles/available",
   rentalRequests: "rental-requests",
   issue: "employee/issue-contract",
-  sign: "contracts/sign"
+  sign: "contracts/sign",
+  notifications: "notifications",
+  signal: "notifications/signal"
 }
