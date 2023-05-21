@@ -1,0 +1,17 @@
+div.input-group {
+  display: grid;
+  row-gap: 3rem;
+  grid-template-columns: auto auto auto;
+
+  div {
+    label {
+      margin-left: 7px;
+      font-weight: bold;
+      display: block;
+    }
+
+    input {
+      border-radius: 20px;
+    }
+  }
+}

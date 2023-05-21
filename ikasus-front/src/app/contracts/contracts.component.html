@@ -1,0 +1,72 @@
+<div class="container">
+  <h1>Contracts</h1>
+  <table cellspacing="0">
+    <thead>
+      <th>Id</th>
+      <th>Title</th>
+      <th></th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contract of contracts">
+        <td>{{ contract.id != null ? contract.id : "-" }}</td>
+        <td>{{ contract.title != null ? contract.title : "-" }}</td>
+        <td style="width: 200px;">
+          <div class="btns">
+            <button type="button" (click)="openModal(contract)">Edit</button>
+            <button class="delete" type="button" (click)="deleteType(contract.id)">Delete</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button style="margin-top: 1rem;" (click)="openModal(undefined)">Add</button>
+</div>
+
+<app-modal [isActive]="modalActive" (close)="closeModal()"
+(action)="updateType()" actionButtonTitle="{{ add ? 'Add' : 'Edit' }}">
+
+<h1>{{ add ? "Add" : "Edit" }} contract</h1>
+<form [formGroup]="contractForm" *ngIf="contractForm">
+  <div class="input-group" style="text-align: left; padding: 1rem 0;">
+      <div>
+        <label for="">Title</label>
+        <input type="text" formControlName="title">
+      </div>
+      <div>
+        <label for="">Contract Tag</label>
+        <input type="text" formControlName="contractTag">
+      </div>
+      <div class="curicev_textarea">
+        <label for="">Content</label>
+        <textarea name="" id="" cols="30" rows="7" formControlName="content"></textarea>
+      </div>
+      <ng-container *ngIf="!add">
+        <div>
+          <label for="">Signed</label>
+          <input type="text" formControlName="signed">
+        </div>
+        <div>
+          <label for="">Signed on</label>
+          <input type="date" formControlName="signedOn">
+        </div>
+        <div>
+          <label for="">Signature path</label>
+          <input type="text" formControlName="signaturePath">
+        </div>
+      </ng-container>
+      <div>
+        <label for="">Price</label>
+        <input type="number" formControlName="price">
+      </div>
+      <div>
+        <label for="">Rental request id</label>
+        <select formControlName="rentalRequestId">
+          <option *ngFor="let rq of requests" value="{{rq.id}}">
+            {{rq.customerFullName}} - {{rq.timeCreated}}
+          </option>
+        </select>
+      </div>
+  </div>
+</form>
+</app-modal>
+

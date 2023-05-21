@@ -1,0 +1,11 @@
+<div class="card" *ngIf="vehicle">
+  <img src="{{vehicle.imagePath ? vehicle.imagePath : 'assets/carnotfound.jpg'}}" alt="">
+  <div class="text">
+    <p class="header">{{vehicle.name}}</p>
+    <span>{{ vehicle.kmDriven }} KM</span>
+    <div class="flex">
+      <p>{{ vehicle.pricePerDay }}€ / day</p>
+      <button (click)="emit(vehicle.id)">Add</button>
+    </div>
+  </div>
+</div>

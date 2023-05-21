@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="flex">
+    <app-search-bar (emitter)="filterVehicles($event)" (clear)="clearFilters()" (sort)="sort($event)"></app-search-bar>
+  </div>
+  <app-card-list (clickEmitter)="addToRental($event)" [cars]="vehiclesFiltered" *ngIf="vehiclesFiltered.length > 0"></app-card-list>
+  <h1 *ngIf="vehiclesFiltered.length == 0">No vehicles found</h1>
+</div>
+<button class="add" *ngIf="selected.length > 0" (click)="openModal()">Review request</button>
+<button class="add" *ngIf="selected.length > 0" (click)="vehiclesFiltered = vehicles">Delete selection</button>
+<app-modal title="Rent" actionButtonTitle="Create request" [isActive]="modalActive" (close)="closeModal()"
+(action)="create()">
+<div>
+  <div *ngFor="let v of selected">
+    <div style="margin-top: 1rem; font-size: larger; font-weight: bold;">{{ v.name }}</div>
+    <div class="rental">
+      <span>From: {{from}}</span>
+      <span>To: {{to}}</span>
+      <span>Price per day: {{v.pricePerDay}} €</span>
+    </div>
+  </div>
+</div>
+</app-modal>

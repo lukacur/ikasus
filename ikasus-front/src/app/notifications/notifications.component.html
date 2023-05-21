@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="flex" *ngFor="let ntf of notifArray">
+    <div>
+      <small>{{ ntf.time.substring(0, 16).replace("T", " ") }}</small>
+      <p>
+        {{ ntf.content }}
+      </p>
+    </div>
+    <div class="buttons">
+      <button (click)="delete(ntf)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+          <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="fixed">
+  <button class="create" (click)="openModal()">
+    Create
+  </button>
+  <button (click)="signal()">
+    Signal
+  </button>
+</div>
+
+<app-modal title="Rent" actionButtonTitle="Create request" [isActive]="modalActive" (close)="closeModal()"
+(action)="create()">
+<form [formGroup]="form" *ngIf="form">
+  <div class="input-group">
+    <div>
+      <label>Content</label>
+      <textarea cols="30" rows="8" formControlName="content"></textarea>
+    </div>
+    <div class="inp">
+      <div>
+        <label>Time</label>
+        <input type="datetime-local" formControlName="time">
+      </div>
+      <div>
+        <label>Rental</label>
+        <select formControlName="rentalId">
+          <option value="{{rental.id}}" *ngFor="let rental of rentals">
+            {{ getVehicle(rental.vehicleId).name }}; {{ rental.timeFrom.substring(0, 10) }} - {{ rental.timeTo.substring(0, 10) }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</form>
+</app-modal>

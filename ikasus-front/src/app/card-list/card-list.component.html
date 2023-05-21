@@ -1,0 +1,3 @@
+<div class="grid" *ngIf="cars.length > 0">
+  <app-card *ngFor="let car of cars" (clickEmitter)="emitCard($event)" [vehicle]="car"></app-card>
+</div>

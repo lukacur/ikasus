@@ -1,0 +1,93 @@
+@import "../../assets/style_guide.scss";
+
+// input {
+//   width: 1040px;
+//   border-radius: 20px;
+//   border: 1px solid #e8e8e8;
+//   font-size: large;
+
+//   padding: 0.6rem 2rem;
+//   background: url("../../assets/search.svg") no-repeat scroll 1080px 10.5px;
+//   padding-right: 55px;
+
+//   &:focus {
+//     outline: none;
+//     border: 1px solid $mint;
+//   }
+
+//   &::placeholder {
+//     color: #acabab;
+//   }
+// }
+
+div.flex {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  select {
+    border-radius: 7px;
+  }
+}
+
+div.input-group {
+  width: 1300px;
+  background-color: white;
+  margin-top: 1rem;
+  border-radius: 7px;
+  padding: 3rem 5rem;
+  display: grid;
+  column-gap: 3rem;
+  row-gap: 2rem;
+  text-align: center;
+  grid-template-columns: auto auto auto;
+
+  div {
+    label {
+      font-weight: bold;
+      display: block;
+    }
+
+    input, select {
+      border-radius: 7px;
+      width: 300px;
+    }
+  }
+
+  div.curicev_textarea {
+    grid-row-start: 1;
+    grid-row-end: 3;
+
+    textarea {
+      resize: none;
+      border-radius: 7px;
+    }
+  }
+
+}
+
+button {
+  width: 130px;
+  background: linear-gradient(to right, $charcoal 50%, $jasmine 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: all .35s ease-out;
+
+  &:hover {
+    background-position: left bottom;
+  }
+}
+
+button.clear {
+  width: 130px;
+  background: linear-gradient(to right, $charcoal 50%, $bittersweet 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  transition: all .35s ease-out;
+
+  &:hover {
+    background-position: left bottom;
+  }
+}

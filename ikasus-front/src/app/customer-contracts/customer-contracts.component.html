@@ -1,0 +1,33 @@
+<div class="container">
+  <h1>My Contracts</h1>
+  <table cellspacing="0" *ngIf="contracts.length > 0">
+    <thead>
+      <th>Id</th>
+      <th>Title</th>
+      <th>Price</th>
+      <th>Signed</th>
+      <th></th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let con of contracts">
+        <td>{{ con.id != null ? con.id : "-" }}</td>
+        <td>{{ con.title != null ? con.title : "-" }}</td>
+        <td>{{ con.price != null ? con.price : "-" }} €</td>
+        <td>{{ con.signed ? "YES" : "NO" }}</td>
+        <td style="width: 200px;" >
+          <div class="btns">
+            <button type="button" *ngIf="!con.signed" (click)="openModal(con.id)">Sign</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-modal [isActive]="modalActive" (action)="sign()" (close)="closeModal()" actionButtonTitle="Sign">
+  <h1>Signature</h1>
+  <form>
+    <input type="file" style="width: 60%; border-radius: 7px" (change)="onFileChange($event)"
+    accept="image/png, image/gif, image/jpeg">
+  </form>
+</app-modal>

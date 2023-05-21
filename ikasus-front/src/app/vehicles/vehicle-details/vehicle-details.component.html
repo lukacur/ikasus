@@ -1,0 +1,123 @@
+<div class="container">
+  <div class="btns">
+    <button (click)="prev()">Previous</button>
+    <button (click)="next()">Next</button>
+  </div>
+  <h1>CAR DETAILS</h1>
+  <form class="form" [formGroup]="vehicleForm" *ngIf="vehicleForm">
+    <div class="input-group">
+      <div>
+        <label for="">Name</label>
+        <input type="text" formControlName="name">
+      </div>
+      <div>
+        <label for="">Manufacturer</label>
+        <input type="text" formControlName="manufacturer">
+      </div>
+      <div>
+        <label for="">KM driven</label>
+        <input type="number" formControlName="kmDriven">
+      </div>
+      <div>
+        <label for="">Price per day</label>
+        <input type="text" formControlName="pricePerDay">
+      </div>
+      <div *ngIf="!imgIsFile">
+        <label for="">Image</label>
+        <input type="text" formControlName="imageUrl">
+      </div>
+      <div *ngIf="imgIsFile">
+        <label for="">Image</label>
+        <input type="file" accept="image/png, image/gif, image/jpeg"
+        (change)="onFileChange($event)">
+      </div>
+      <div class="radio">
+        <button (click)="imgIsFile = !imgIsFile">
+          {{ imgIsFile ? "Image from URL" : "Image from file"}}
+        </button>
+      </div>
+      <div>
+        <label for="">Type</label>
+        <select formControlName="vehicleTypeId">
+          <option *ngFor="let type of types" [ngValue]="type.id">
+            {{type.typeName}}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label for="">Location</label>
+        <select formControlName="locationId">
+          <option *ngFor="let loc of locations" value="{{loc.id}}">
+            {{loc.address}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="btns">
+      <button (click)="patchVehicle()" type="submit">Save</button>
+      <button class="delete" type="button" (click)="deleteVehicle()">Delete</button>
+    </div>
+  </form>
+  <table cellspacing="0">
+    <thead>
+      <th>From</th>
+      <th>To</th>
+      <th>KM driven</th>
+      <th>Active</th>
+      <th>Contract</th>
+      <th></th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rental of rentals">
+        <td>{{ rental.timeFrom != null ? timestampToDate(rental.timeFrom) : "-" }}</td>
+        <td>{{ rental.timeTo != null ? timestampToDate(rental.timeTo) : "-" }}</td>
+        <td>{{ rental.kmDriven != null ? rental.kmDriven : "-" }}</td>
+        <td>{{ rental.active != null ? rental.active : "-" }}</td>
+        <td>{{ rental.contractId != null ? rental.contractId : "-" }}</td>
+        <td>
+          <div class="btns">
+            <button type="button" (click)="openModal(rental)">Edit</button>
+            <button class="delete" type="button" (click)="deleteRental(rental.id)">Delete</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button style="margin-top: 1rem;" (click)="add()">Add</button>
+</div>
+
+<app-modal [isActive]="modalActive" actionButtonTitle="{{ create ? 'Add' : 'Edit' }}" (close)="closeModal()"
+(action)="updateRental()">
+  <h1>{{ create ? "Add" : "Edit" }} rental</h1>
+  <form *ngIf="rentalForm" [formGroup]="rentalForm">
+    <div class="input-group" style="text-align: left; padding: 1rem 0;">
+      <div>
+        <label for="">From</label>
+        <input type="date" formControlName="timeFrom">
+      </div>
+      <div>
+        <label for="">To</label>
+        <input type="date" formControlName="timeTo">
+      </div>
+      <div>
+        <label for="">KM driven</label>
+        <input type="number" formControlName="kmDriven">
+      </div>
+      <div>
+        <label for="">Active</label>
+        <select formControlName="active">
+          <option value="{{true}}">TRUE</option>
+          <option value="{{false}}">FALSE</option>
+        </select>
+      </div>
+      <div>
+        <label for="">Contract</label>
+        <select formControlName="contractId">
+          <option *ngFor="let con of contracts" value="{{con.id}}">
+            {{ con.title }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </form>
+</app-modal>

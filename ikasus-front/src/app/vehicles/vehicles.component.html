@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="grid">
+    <div class="card" *ngFor="let vehicle of vehicles">
+      <img src="{{vehicle.imagePath ? vehicle.imagePath : 'assets/carnotfound.jpg'}}" alt="">
+      <div class="text">
+        <p class="header">{{vehicle.name}}</p>
+        <span>{{ vehicle.kmDriven }} KM</span>
+        <div class="flex">
+          <p>{{ vehicle.pricePerDay }}€ / day</p>
+          <button (click)="navigateTo(vehicle.id)">Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

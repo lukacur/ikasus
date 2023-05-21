@@ -1,0 +1,18 @@
+<div class="container">
+  <h1>Pick a date</h1>
+  <form class="group" *ngIf="form" [formGroup]="form">
+    <div>
+      <label>From</label>
+      <input type="date" formControlName="from">
+    </div>
+    <div>
+      <label>To</label>
+      <input type="date" formControlName="to">
+    </div>
+    <div>
+      <label>Price</label>
+      <input type="number" formControlName="maxPricePerDay">
+    </div>
+  </form>
+  <button style="margin-top: 2rem;" (click)="submit()">Find vehicles</button>
+</div>
