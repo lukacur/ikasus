@@ -269,8 +269,11 @@ public class ContractServiceImpl implements ContractService {
         for (Najam rental : contOpt.get().getNajams()) {
             CreateRentalDetail detail = new CreateRentalDetail();
             detail.setTimeFrom(Date.from(rental.getVrijemeod()));
+
             if (rental.getVrijemedo() == null) {
                 detail.setTimeTo(new Date());
+            } else {
+                detail.setTimeTo(Date.from(rental.getVrijemedo()));
             }
             detail.setActive(false);
 
