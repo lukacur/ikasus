@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { VehiclesService } from '../vehicles/vehicles.service';
-import { RentalsService } from '../rentals.service';
+import { RentalRequest, RentalsService } from '../rentals.service';
 
 @Component({
   selector: 'app-contracts',
@@ -15,6 +15,7 @@ export class ContractsComponent implements OnInit {
   contractForm: FormGroup | undefined;
   add = false;
   sub = new Subscription();
+  requests: RentalRequest[] = []
 
   constructor(private serv: VehiclesService, private rentServ: RentalsService) { }
 
@@ -24,8 +25,15 @@ export class ContractsComponent implements OnInit {
 
   getData() {
     this.sub.add(
-      this.serv.getAllContracts().subscribe(tp => {
-        this.contracts = tp;
+      this.rentServ.getAllRentalRequests().subscribe(rqs => {
+
+        this.requests = rqs;
+
+        this.sub.add(
+          this.serv.getAllContracts().subscribe(cnts => {
+            this.contracts = cnts.sort((a, b) => (a.id > b.id) ? 1 : -1);
+          })
+        )
       })
     )
   }
@@ -38,11 +46,12 @@ export class ContractsComponent implements OnInit {
 
   openModal(contract: any) {
     this.modalActive = true;
+    this.contractForm = undefined;
 
     if (contract) {
       this.rentServ.getContract(contract.id).subscribe(cnt => {
         this.contractForm = new FormGroup({
-          "id": new FormControl(cnt.id, Validators.required),
+          "id": new FormControl(contract.id, Validators.required),
           "title": new FormControl(cnt.title, Validators.required),
           "contractTag": new FormControl(cnt.contractTag, Validators.required),
           "content": new FormControl(cnt.content, Validators.required),
@@ -58,7 +67,6 @@ export class ContractsComponent implements OnInit {
     else {
       this.add = true;
       this.contractForm = new FormGroup({
-        "id": new FormControl(null, Validators.required),
         "title": new FormControl(null, Validators.required),
         "contractTag": new FormControl(null, Validators.required),
         "content": new FormControl(null, Validators.required),
@@ -74,21 +82,23 @@ export class ContractsComponent implements OnInit {
     this.modalActive = false;
   }
 
-  deleteType(id: string) {
-    this.serv.deleteType(id).subscribe(_ => {
+  deleteType(id: number) {
+    this.rentServ.deleteContract(id).subscribe(_ => {
       this.getData();
     })
   }
 
   updateType() {
     if (this.add) {
-      this.serv.addType(this.contractForm?.value).subscribe(_ => {
+      this.rentServ.addContract(this.contractForm?.value).subscribe(_ => {
         this.getData();
         this.closeModal()
       })
     }
     else {
-      this.serv.updateType(this.contractForm?.value).subscribe(_ => {
+      const id = this.contractForm!.get("id")?.value;
+      this.contractForm?.removeControl("id");
+      this.rentServ.updateContract(this.contractForm?.value, id).subscribe(_ => {
         this.getData();
         this.closeModal()
       })

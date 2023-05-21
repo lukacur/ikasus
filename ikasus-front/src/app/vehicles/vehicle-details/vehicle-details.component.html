@@ -1,4 +1,8 @@
 <div class="container">
+  <div class="btns">
+    <button (click)="prev()">Previous</button>
+    <button (click)="next()">Next</button>
+  </div>
   <h1>CAR DETAILS</h1>
   <form class="form" [formGroup]="vehicleForm" *ngIf="vehicleForm">
     <div class="input-group">

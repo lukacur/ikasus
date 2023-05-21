@@ -55,6 +55,10 @@ input, select, textarea {
   }
 }
 
+textarea {
+  padding: 0.3rem 1rem;
+}
+
 div.grid {
   @media (max-width: 1200px) {
     grid-template-columns: auto auto !important;
@@ -72,5 +76,26 @@ div.input-group {
 
   @media (max-width: 1200px) {
     grid-template-columns: auto !important;
+  }
+}
+table {
+  border: none !important;
+  border-radius: 7px;
+
+  thead {
+    th {
+      &:first-of-type {
+        border-top-left-radius: 7px;
+      }
+      &:last-of-type {
+        border-top-right-radius: 7px;
+      }
+    }
+  }
+
+  tr {
+    &:nth-of-type(2n) {
+      background-color: #f1f1f1;
+    }
   }
 }

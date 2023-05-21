@@ -4,6 +4,7 @@
     <ng-content></ng-content>
     <div class="btn-group">
       <button class="cancel" (click)="closeModal()">Cancel</button>
+      <button *ngIf="action2ButtonTitle" class="del" (click)="emitAction2()">{{ action2ButtonTitle }}</button>
       <button (click)="emitAction()">{{ actionButtonTitle }}</button>
     </div>
   </div>

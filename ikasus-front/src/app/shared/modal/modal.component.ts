@@ -9,7 +9,9 @@ export class ModalComponent implements OnInit {
   @Input() isActive: boolean = false;
   @Input() title: string = "";
   @Input() actionButtonTitle: string = "";
+  @Input() action2ButtonTitle: string = "";
   @Output() action = new EventEmitter<void>();
+  @Output() action2 = new EventEmitter<void>();
   @Output() close = new EventEmitter<void>();
 
   constructor() { }
@@ -23,6 +25,10 @@ export class ModalComponent implements OnInit {
 
   emitAction() {
     this.action.emit()
+  }
+
+  emitAction2() {
+    this.action2.emit()
   }
 
 }

@@ -21,7 +21,10 @@ export class CardComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.vehicle && this.vehicle.imagePath && !this.vehicle.imagePath.startsWith("https")) {
+    if (this.vehicle && this.vehicle.imagePath && !this.vehicle.imagePath.startsWith("https")
+    && !this.vehicle.imagePath.startsWith("http")) {
+      console.log("Here");
+      console.log(this.vehicle.imagePath);
       this.vehicle.imagePath = Routes.ORIGIN + this.vehicle.imagePath.substring(1)
     }
   }

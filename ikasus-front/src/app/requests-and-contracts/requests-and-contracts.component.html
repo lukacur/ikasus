@@ -7,38 +7,70 @@
 
     <div class="flex-list">
       <div class="card" *ngFor="let request of requests">
-        <small>Request for</small>
-        <h3>Toyota Yaris</h3>
-        <small>Time period</small>
-        <h3>13.4.2023. - 17.4.2023.</h3>
+        <small>Request Id</small>
+        <h3>{{request.id}}</h3>
+        <small>Created on</small>
+        <h3>{{ request.timeCreated }}</h3>
         <small>By user</small>
-        <h3>Jane Doe</h3>
+        <h3>{{request.customerFullName}}</h3>
         <div class="btn-flex">
-          <button>Review</button>
+          <button (click)="openModal(request)">Review</button>
         </div>
       </div>
     </div>
   </div>
   <div class="group" >
-    <h2>UNAPPROVED CONTRACTS <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black" class="bi bi-card-text" viewBox="0 0 16 16">
+    <h2>FINISHED CONTRACTS <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black" class="bi bi-card-text" viewBox="0 0 16 16">
       <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
       <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
     </svg></h2>
 
     <div class="flex-list">
       <div class="card card-contract" *ngFor="let contract of contracts">
-        <small>Contract for</small>
-        <h3>Toyota Yaris</h3>
-        <small>Time period</small>
-        <h3>13.4.2023. - 17.4.2023.</h3>
-        <small>By user</small>
-        <h3>Jane Doe</h3>
-        <small>Contract no.</small>
-        <h3>NX146033</h3>
+        <small>Contract</small>
+        <h3>{{ contract.id }}</h3>
+        <small>Title</small>
+        <h3>{{ contract.title.length > 70 ? contract.title.slice(0, 70) + "..." : contract.title}}</h3>
+        <small>Price</small>
+        <h3>{{ contract.price }} €</h3>
         <div class="btn-flex">
-          <button>Review</button>
+          <button (click)="complete(contract.id)">Complete</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<app-modal (action)="issueContract()" actionButtonTitle="Issue contract"
+[isActive]="modalActive" (close)="closeModal()" action2ButtonTitle="Deny" (action2)="unapproveRequest()">
+<h1>Review request</h1>
+
+<div *ngIf="request">
+  <div *ngFor="let vehicle of request.vehicleDetails">
+    <h3>{{vehicle.vehicleName}}</h3>
+    <div>From: {{trimDate(vehicle.rentFrom)}}</div>
+    <div>To: {{trimDate(vehicle.rentTo)}}</div>
+  </div>
+</div>
+
+<form [formGroup]="contractForm" *ngIf="contractForm">
+  <div class="input-group" style="text-align: left; padding: 1rem 0;">
+      <div>
+        <label for="">Title</label>
+        <input type="text" formControlName="title">
+      </div>
+      <div>
+        <label for="">Contract Tag</label>
+        <input type="text" formControlName="contractTag">
+      </div>
+      <div class="curicev_textarea">
+        <label for="">Content</label>
+        <textarea name="" id="" cols="30" rows="7" formControlName="content"></textarea>
+      </div>
+      <div>
+        <label for="">Price</label>
+        <input type="number" formControlName="price">
+      </div>
+  </div>
+</form>
+</app-modal>

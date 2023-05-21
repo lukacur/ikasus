@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { VehiclesService } from '../vehicles.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VehicleDetails, VehicleType, Location, Rental, Contract } from '../vehicle.models';
+import { VehicleDetails, VehicleType, Location, Rental, Contract, Vehicle } from '../vehicle.models';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription, tap } from 'rxjs';
 
@@ -15,6 +15,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   locations: Location[] = [];
   rentals: Rental[] = [];
   contracts: Contract[] = [];
+  vehicles: Vehicle[] = [];
   vehicleForm!: FormGroup;
   rentalForm: FormGroup | undefined;
   modalActive: boolean = false;
@@ -28,13 +29,38 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs = new Subscription();
-    this.getData()
+    this.getData();
+    this.serv.getAllVehicles().subscribe(vs => {
+      this.vehicles = vs.sort((a, b) => (a.id > b.id) ? 1 : -1);
+    })
   }
 
   ngOnDestroy(): void {
     if (this.subs) {
       this.subs.unsubscribe()
     }
+  }
+
+  prev() {
+    const vehicle = this.vehicles.filter(v => v.id == this.route.snapshot.params["id"])[0]
+    const id = this.vehicles.indexOf(vehicle);
+
+    if (id == 0) return;
+
+    this.router.navigate(["../", this.vehicles[id - 1].id], { relativeTo: this.route}).then(() => {
+      window.location.reload()
+    })
+  }
+
+  next() {
+    const vehicle = this.vehicles.filter(v => v.id == this.route.snapshot.params["id"])[0]
+    const id = this.vehicles.indexOf(vehicle)
+
+    if (id + 1 == this.vehicles.length) return;
+
+    this.router.navigate(["../", this.vehicles[id + 1].id], { relativeTo: this.route}).then(() => {
+      window.location.reload()
+    })
   }
 
   getData() {
@@ -78,7 +104,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
 
   updateRental() {
     if (this.rentalForm && !this.rentalForm.valid) return;
-    
+
     if (this.rentalForm && this.rentalForm.value) {
 
       if (this.create) {

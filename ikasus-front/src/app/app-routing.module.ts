@@ -9,6 +9,7 @@ import { VehicleDetailsComponent } from './vehicles/vehicle-details/vehicle-deta
 import { DatepickerComponent } from './datepicker/datepicker.component';
 import { VehicleTypesComponent } from './vehicle-types/vehicle-types.component';
 import { ContractsComponent } from './contracts/contracts.component';
+import { CustomerContractsComponent } from './customer-contracts/customer-contracts.component';
 
 const routes: Routes = [
   { path: "", component: DatepickerComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: "login", component: LoginComponent },
   { path: "types", component: VehicleTypesComponent },
   { path: "contracts", component: ContractsComponent },
+  { path: "my-contracts", component: CustomerContractsComponent },
   { path: "vehicles", component: VehiclesComponent },
   { path: "vehicles/:id", component: VehicleDetailsComponent },
   { path: "contracts-and-requests", component: RequestsAndContractsComponent },

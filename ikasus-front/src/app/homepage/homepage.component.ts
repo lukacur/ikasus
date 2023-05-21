@@ -26,6 +26,7 @@ export class HomepageComponent implements OnInit {
     this.serv.getVehiclesByDate(this.route.snapshot.queryParams).subscribe(vhs => {
       this.vehicles = vhs;
       this.vehiclesFiltered = vhs;
+      this.sort(1);
       this.from = this.route.snapshot.queryParams["from"];
       this.to = this.route.snapshot.queryParams["to"];
     })
@@ -39,6 +40,30 @@ export class HomepageComponent implements OnInit {
 
   closeModal() {
     this.modalActive = false;
+  }
+
+  filterVehicles(form: any) {
+    this.vehiclesFiltered = this.vehicles;
+
+    if (form.name) {
+      this.vehiclesFiltered = this.vehiclesFiltered.filter(v => v.name.toLowerCase().includes(form.name.toLowerCase()));
+    }
+    if (form.kmDriven) {
+      this.vehiclesFiltered = this.vehiclesFiltered.filter(v => v.kmDriven <= form.kmDriven);
+    }
+    if (form.pricePerDay) {
+      this.vehiclesFiltered = this.vehiclesFiltered.filter(v => v.pricePerDay <= form.pricePerDay);
+    }
+    if (form.manufacturer) {
+      this.vehiclesFiltered = this.vehiclesFiltered.filter(v => v.manufacturer.toLowerCase().includes(form.manufacturer.toLowerCase()));
+    }
+    if (form.vehicleTypeId) {
+      this.vehiclesFiltered = this.vehiclesFiltered.filter(v => v.vehicleTypeId == form.vehicleTypeId);
+    }
+  }
+
+  clearFilters() {
+    this.vehiclesFiltered = this.vehicles;
   }
 
   openModal() {
@@ -59,5 +84,14 @@ export class HomepageComponent implements OnInit {
     this.rentServ.createRequest({ requestedRentals: requests}).subscribe(_ => {
       window.location.reload()
     })
+  }
+
+  sort(type: number) {
+    if (type == 1) {
+      this.vehiclesFiltered = this.vehiclesFiltered.sort((a, b) => (a.pricePerDay > b.pricePerDay) ? 1 : -1)
+    }
+    else {
+      this.vehiclesFiltered = this.vehiclesFiltered.sort((a, b) => (a.pricePerDay < b.pricePerDay) ? 1 : -1)
+    }
   }
 }

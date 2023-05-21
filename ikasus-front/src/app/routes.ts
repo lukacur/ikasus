@@ -9,6 +9,9 @@ export const Routes = {
   locations: "locations",
   rentals: "rentals",
   contracts: "contracts",
+  completeContract: "contracts/complete",
   availableVehicles: "vehicles/available",
   rentalRequests: "rental-requests",
+  issue: "employee/issue-contract",
+  sign: "contracts/sign"
 }

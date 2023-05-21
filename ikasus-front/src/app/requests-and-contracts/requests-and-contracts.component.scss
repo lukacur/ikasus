@@ -77,6 +77,18 @@ div.container {
         background-color: $charcoal;
         color: white;
         height: 380px;
+
+        h3 {
+          &:nth-of-type(2) {
+            height: 80px;
+            margin-bottom: 1rem;
+          }
+        }
+
+        &:hover {
+          transform: scale(1);
+        }
+        transition: all 0.4s;
       }
 
       .card-contract:after {
@@ -93,4 +105,46 @@ div.container {
       }
     }
   }
+}
+
+div.input-group {
+  width: 100%;
+  background-color: white;
+  margin-top: 1rem;
+  border-radius: 7px;
+  padding: 3rem 5rem;
+  display: grid;
+  row-gap: 3rem;
+  text-align: center;
+  grid-template-columns: auto auto auto;
+
+  div {
+    label {
+      font-weight: bold;
+      display: block;
+    }
+
+    input, select {
+      border-radius: 7px;
+      width: 260px;
+    }
+  }
+
+  div.curicev_textarea {
+    grid-row-start: 1;
+    grid-row-end: 3;
+
+    textarea {
+      resize: none;
+      border-radius: 7px;
+    }
+  }
+
+  div.radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1.25rem;
+  }
+
 }

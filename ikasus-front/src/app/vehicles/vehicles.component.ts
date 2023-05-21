@@ -17,7 +17,7 @@ export class VehiclesComponent implements OnInit {
 
   ngOnInit(): void {
     this.serv.getAllVehicles().subscribe(vehicles => {
-      this.vehicles = vehicles
+      this.vehicles = vehicles.sort((a, b) => (a.id > b.id) ? 1 : -1)
       this.vehicles.forEach(v => {
         if (v.imagePath && !v.imagePath.startsWith("https")) {
           v.imagePath = this.origin + v.imagePath.substring(1);

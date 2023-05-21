@@ -7,8 +7,9 @@
       </svg> -->
     </a>
     <ng-container *ngIf="getScreenWidth > 800">
-      <a routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/">HOME</a>
-      <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/contracts-and-requests">CONTRACTS AND REQUESTS</a>
+      <a *ngIf="user && role == 0" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/">HOME</a>
+      <a *ngIf="user && role == 0" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/my-contracts">MY CONTRACTS</a>
+      <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/contracts-and-requests">REQUESTS</a>
       <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/vehicles">VEHICLES</a>
       <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/types">TYPES</a>
       <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/contracts">CONTRACTS</a>
@@ -40,7 +41,7 @@
 
 <div *ngIf="getScreenWidth < 800 && !collapsed" class="column">
   <a routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/">HOME</a>
-  <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/contracts-and-requests">CONTRACTS AND REQUESTS</a>
+  <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/contracts-and-requests">REQUESTS</a>
   <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/vehicles">VEHICLES</a>
   <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/types">TYPES</a>
   <a *ngIf="user && (role == 1 || role == 2)" routerLinkActive="link" [routerLinkActiveOptions]="{ exact: true }" routerLink="/contracts">CONTRACTS</a>

@@ -38,27 +38,33 @@
       </div>
       <div class="curicev_textarea">
         <label for="">Content</label>
-        <textarea name="" id="" cols="30" rows="8" formControlName="content"></textarea>
+        <textarea name="" id="" cols="30" rows="7" formControlName="content"></textarea>
       </div>
-      <div>
-        <label for="">Signed</label>
-        <input type="text" formControlName="signed">
-      </div>
-      <div>
-        <label for="">Signed on</label>
-        <input type="date" formControlName="signedOn">
-      </div>
-      <div>
-        <label for="">Signature path</label>
-        <input type="text" formControlName="signaturePath">
-      </div>
+      <ng-container *ngIf="!add">
+        <div>
+          <label for="">Signed</label>
+          <input type="text" formControlName="signed">
+        </div>
+        <div>
+          <label for="">Signed on</label>
+          <input type="date" formControlName="signedOn">
+        </div>
+        <div>
+          <label for="">Signature path</label>
+          <input type="text" formControlName="signaturePath">
+        </div>
+      </ng-container>
       <div>
         <label for="">Price</label>
         <input type="number" formControlName="price">
       </div>
       <div>
         <label for="">Rental request id</label>
-        <input type="text" formControlName="rentalRequestId">
+        <select formControlName="rentalRequestId">
+          <option *ngFor="let rq of requests" value="{{rq.id}}">
+            {{rq.customerFullName}} - {{rq.timeCreated}}
+          </option>
+        </select>
       </div>
   </div>
 </form>
