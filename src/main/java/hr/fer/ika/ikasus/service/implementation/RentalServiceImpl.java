@@ -213,9 +213,11 @@ public class RentalServiceImpl implements RentalService {
         rental.setIdvozilo(vehicleOpt.get());
         rental.setIdugovor(contractOpt.get());
         rental.setVrijemeod(detail.getTimeFrom().toInstant());
-        if (detail.getTimeTo() != null) {
-            rental.setVrijemedo(detail.getTimeTo().toInstant());
+        if (detail.getTimeTo() == null) {
+            return null;
         }
+
+        rental.setVrijemedo(detail.getTimeTo().toInstant());
 
         rental = this.najamRepository.save(rental);
 
